@@ -1,0 +1,47 @@
+[{
+		"pk" : 1,
+		"model" : "core.keyvaluegroup",
+		"fields" : {
+			"name" : "Site Settings"
+		}
+	}, {
+		"pk" : 2,
+		"model" : "core.keyvaluegroup",
+		"fields" : {
+			"name" : "Home Page"
+		}
+	}, {
+		"pk" : 1,
+		"model" : "core.keyvalue",
+		"fields" : {
+			"group" : 1,
+			"value" : "Cartoview",
+			"key" : "title"
+		}
+	}, {
+		"pk" : 2,
+		"model" : "core.keyvalue",
+		"fields" : {
+			"group" : 1,
+			"value" : "Copyright \u00a9 Cartoview 2014 -  by <a id=\"copyright-link\" href=\"http://www.cartologic.com/\">Cartologic</a> ",
+			"key" : "Copyright Text"
+		}
+	}, {
+		"pk" : 3,
+		"model" : "core.keyvalue",
+		"fields" : {
+			"group" : 2,
+			"value" : "12",
+			"key" : "Items Per Page"
+		}
+	}
+	, {
+		"pk" : 4,
+		"model" : "core.keyvalue",
+		"fields" : {
+			"group" : 2,
+			"value" : "catalog",
+			"key" : "homepage"
+		}
+	}
+]

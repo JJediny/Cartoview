@@ -1,0 +1,55 @@
+{% extends "registration/registration_base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+  {% include 'registration/form_errors.html' %}
+    <form id="form-login" method="post" class="well" action="{% url 'django.contrib.auth.views.login' %}">{% csrf_token %}
+        {% include 'registration/form_fields.html' %}
+        <p><a href="{% url 'auth_password_reset' %}">Forgot</a> your password?  <a href="{% url 'registration_register' %}">Need an account</a>?</p>
+        <a id="btn-login" href="#" class="btn" >Login</a>
+        <input type="hidden" name="next" value="{% url 'cartoview2_base_url' %}" />
+    </form>
+
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'form2js/form2js.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('#btn-login').click(function(e){
+                e.preventDefault();
+                var data = form2js('form-login');
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    dataType: 'json',
+                    processData: false,
+                    url: "{% url 'cartoview2_base_url' %}core/api/rest/user/login/",
+                    success: function(res, status, jqXHR) {
+                        if(res.success){
+                            window.location= "{% url 'cartoview2_base_url' %}";
+                        }
+                        else{
+                            $('<div/>').addClass('').insertBefore('#form-login').text(res.reason);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log(jqXHR.responseJSON.error_message);
+                        console.debug(jqXHR.responseJSON.traceback);
+                        console.log(jqXHR)
+                        console.log(textStatus)
+                        console.log(errorThrown)
+
+                        return;
+                        var errors = JSON.parse(jqXHR.responseText)
+                        for (field in errors) {
+                            var field_error = errors[field][0]
+                            $('#id_' + field).addClass('invalid')
+                            .after('<span class="error-message">'+ field_error +'</span>')
+                        }
+
+                    }
+                }); // end $.ajax()
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,24 @@
+  <h2 class="grid">Recent Additions</h2>
+  <ul id="home_additions_list" class="list-group">
+    {% for resource in recent %}
+		<li class="list-group-item">
+		  <p class="date">{{resource.created|date:"l, F d, Y"}}</p>
+		  <a href="{% url 'catalog_base_url' %}{{resource.get_absolute_url}}" class="data">{{resource}}</a>
+		  <div class="home_rating">
+		  	  <input name="star_r_{{resource.id}}" type="radio" class="star star_r_{{resource.id}}" disabled="disabled"/>
+			  <input name="star_r_{{resource.id}}" type="radio" class="star star_r_{{resource.id}}" disabled="disabled"/>
+			  <input name="star_r_{{resource.id}}" type="radio" class="star star_r_{{resource.id}}" disabled="disabled"/>
+			  <input name="star_r_{{resource.id}}" type="radio" class="star star_r_{{resource.id}}" disabled="disabled"/>
+			  <input name="star_r_{{resource.id}}" type="radio" class="star star_r_{{resource.id}}" disabled="disabled"/>
+			  <script type="text/javascript">
+
+				var rating = {{resource.rating.score}};
+				if (rating != 0) {
+					$("input:radio.star_r_{{resource.id}}")[{{resource.rating.score}}-1].checked = 'checked';
+				}
+			  </script>
+		  </div>
+		</li>
+	{% endfor %}
+
+  </ul>

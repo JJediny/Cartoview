@@ -1,0 +1,14 @@
+{% load static from staticfiles %}
+{% load mustache_js %}
+<script type="text/javascript">
+	var STATIC_URL = '{% static "" %}';
+	var MARKERS_LIST = {{markers_list}};
+</script>
+<script src="{% static 'mustache.js' %}"></script>
+{% load_mustache_template "point_styler.html" "cartoview2.core" %}
+{% load_mustache_template "line_styler.html" "cartoview2.core" %}
+{% load_mustache_template "polygon_styler.html" "cartoview2.core" %}
+{% load_mustache_template "styler.html" "cartoview2.core" %}
+{% for js in js_files %}
+	<script type="text/javascript" src="{% static js %}"></script>
+{% endfor %}

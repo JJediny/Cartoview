@@ -1,0 +1,36 @@
+[
+{
+    "pk": 1, 
+    "model": "catalog.urltype", 
+    "fields": {
+        "url_type": "API"
+    }
+},
+{
+    "pk": 2, 
+    "model": "catalog.urltype", 
+    "fields": {
+        "url_type": "Application"
+    }
+},
+{
+    "pk": 3, 
+    "model": "catalog.urltype", 
+    "fields": {
+        "url_type": "Data"
+    }
+},
+
+{
+    "pk": 1, 
+    "model": "catalog.settings", 
+    "fields": {
+        "title": "Catalog", 
+        "site": 1, 
+        "resources_per_page": 10, 
+        "show_tags_panel": true, 
+        "show_categories_panel": true, 
+        "enable_rating": true
+    }
+}
+]

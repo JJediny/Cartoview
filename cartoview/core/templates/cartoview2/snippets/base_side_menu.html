@@ -1,0 +1,128 @@
+{% load i18n %}
+{% load account thumbnail%}
+{% load staticfiles %}
+{% load url from future %}
+{% include 'cartoview2/snippets/user_area.html' %}
+{% block styles %}
+        <style>
+ .right-caret {
+    border-bottom: 4px solid transparent;
+    border-top: 4px solid transparent;
+    border-left: 4px solid #000000;
+    display: inline-block;
+    height: 0;
+    opacity: 0.3;
+    width: 0;
+}
+            a img, a span , a a{ vertical-align: middle; }
+            </style>
+{% endblock %}
+<nav id="myNavmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation" style="">
+ <a class="navmenu-brand" href="{% url 'cartoview2_base_url' %}">{{site_settings_title}}
+
+  {% if carto_settings.show_home_logo %}
+     <i class="glyphicon glyphicon-home"></i>
+  {% endif %}
+ </a>
+ <ul id="apps-side-menu" class="nav navmenu-nav">
+     <li style="position:relative;">
+     <a href="{% url 'catalog_base_url' %}">Catalog</a>
+      <a href="{% url 'catalog_base_url' %}new"><b>Create New </b><i class="glyphicon glyphicon-file"></i></a>
+     <!--{% if user.is_superuser %}-->
+     <!--<div id="catalog-actions-btns" class="app-actions">-->
+     <!--<a title="Catalog Settings" href="{% url 'catalog_base_url' %}settings"><i class="glyphicon glyphicon-cog"></i></a>-->
+         <!--</div>-->
+     <!--{% endif %}-->
+
+         </li>
+     <!--{{CARTOVIEW_APPS}}-->
+    {% for app in CARTOVIEW_APPS %}
+        {% if app.in_menu %}
+
+        <li style="position:relative;">
+            {% if app.app_logo %}
+
+            {% thumbnail app.app_logo  '32x32' format="PNG"  as im %}
+			{% if app.single_instance %}
+				<a href="{% url 'cartoview2_base_url' %}{{app.name}}/"><img  src="{{ im.url }}" width="32" height="32">  <span> {{app.title}}</span></a>
+			{% else %}
+            <a  href="{% url 'catalog_base_url' %}search/?app={{app.name}}"><img  src="{{ im.url }}" width="32" height="32">  <span> {{app.title}}</span>
+            {% endif %}
+              {% endthumbnail %}
+            {% else %}
+            {% if app.single_instance %}
+					<a href="{% url 'cartoview2_base_url' %}{{app.name}}/"><img  src="{% static 'images/default_logo.png' %}" width="32" height="32">  <span> {{app.title}}</span></a>
+			{% else %}
+            <a  href="{% url 'catalog_base_url' %}search/?app={{app.name}}"><img  src="{% static 'images/default_logo.png' %}" width="32" height="32">  <span> {{app.title}}</span>
+            {% endif %}
+            {% endif %}
+            <div style="vertical-align:middle;"  id="{{app.name}}-actions-btns" class="app-actions">
+                {% if app.help_url %}
+          <a style="vertical-align:middle;" title="Help" href="{{app.help_url}}"><i style="vertical-align:middle;"  class="glyphicon glyphicon-info-sign"></i></a>
+             {% endif %}
+                {% if user.is_superuser %}
+                <!-- {% if app.settings_url %}
+                   <a style="vertical-align:middle;" title="App Settings" href="{{app.settings_url}}"><i style="vertical-align:middle;"  class="glyphicon glyphicon-cog"></i></a>
+                {% endif %} -->
+             {% endif %}
+            </div>
+                </a>
+        </li>
+     {% endif %}
+    {% endfor %}
+    {% block navmenu_items %}{% endblock navmenu_items %}
+
+    {% if user.is_superuser %}
+       <!-- <li><a href="{% url 'cartoview2_base_url' %}admin">Admin</a></li>
+       <li><a href="{% url 'cartoview2_base_url' %}rest/">REST API</a></li> -->
+       <li><a href="{% url 'cartoview2_base_url' %}settings"><b>Cartoview manager</b></a></li>
+       <li><a href="{% url 'admin:index' %}"><b>Django admin</b></a></li>
+    {%endif%}
+     {% url 'documentation' as documentation_url %}
+     {% if documentation_url%}
+     <li style="position:relative;"> <a href="http://www.cartologic.com/cartoview/documentation/getting-started/"><b></b>Documentation</b> <i class="glyphicon glyphicon-book"></i></a> </li>
+     {% endif %}
+
+     {% block user_area %}
+                 {% if user.is_authenticated %}
+                 <li style="position:relative;">
+                     {% url 'profile-settings' as profile_url %}
+	                 {% if profile_url %}
+                         <a href="{% url 'profile-profile' user.username %}" class="navbar-left navbar-brand ">
+                     {% else %}
+                         <a href="#" class="navbar-left navbar-brand ">
+                     {% endif %}
+                    <p >
+					{% if user.profile %}
+						<img src= "{{ user.profile.get_picture }}" style="width:30px; height:30px;"/>
+					{% else %}
+						<!-- <b class="glyphicon glyphicon-user"></b> -->
+						<img src= "{% static 'images/user.png' %}" style="width:30px; height:30px;"/>
+					{%endif%}
+                       <span>{% filter force_escape %}{% firstof user.get_short_name user.get_username %}{% endfilter %}</span>
+					   <!-- <span class="badge" id="unread-count"></span> -->
+                       <b class="right-caret"></b>
+                    </p>
+                    <!--<p class = "visible-xs">-->
+                       <!--<span class="glyphicon glyphicon-user"></span>-->
+                       <!--<b class="right-caret"></b>-->
+                    <!--</p>-->
+                 </a>
+
+                {% for app in CARTOVIEW_APPS %}
+                    {% if app.name == "messages" %}
+                        <a href="{% url 'cartoview2_base_url' %}messages/" title="Inbox" style="float: right;"><div class="pull-right" id="unread-count" style="position: relative; right: 13px; z-index: 1;"></div><img src="{% static 'inbox_icon.png' %}" style="float: right; position: relative; right: 0; width: 32px;"/></a>
+                        {% block scripts %}
+                            <script src="{{ STATIC_URL }}js/check_messages.js"></script>
+                        {% endblock scripts %}
+                    {% endif %}
+               {% endfor %}
+				</li>
+                      <a href="{% url 'account_logout' %}?next={{current_path}}" class="navbar-left navbar-brand">{% trans 'Logout' %} <span class="glyphicon glyphicon-log-out"></span></a>
+
+                 {% else %}
+                 <a href="{% url 'account_login' %}?next={{current_path}}" class="navbar-left navbar-brand">{% trans 'Login' %} <span class="glyphicon glyphicon-log-in"></span></a>
+                 {% endif %}
+     {% endblock user_area %}
+ </ul>
+</nav>

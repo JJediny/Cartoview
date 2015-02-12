@@ -1,0 +1,69 @@
+
+
+/*
+@ 
+import url("http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css");
+*/
+.panel{
+    position:relative;
+    overflow:hidden;
+}
+.panel-image {
+    position: relative;   
+}
+.panel-image img.panel-image-preview {
+    width: 100%;
+    border-radius: 0px;
+}
+
+.panel-image label {
+    display: block;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+.panel-heading ~ .panel-image img.panel-image-preview {
+    border-radius: 0px;
+}
+
+
+
+.panel-body {
+    position:absolute;
+    top:-100%;
+    right:0;
+    background:rgba(66, 139, 202, 0.75);
+    width:100%;
+    height:100%;
+    padding:2%;
+    
+    color:#fff !important;
+    z-index:2;
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    -ms-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+}
+
+.panel-body-active {
+    top: 0%;
+    padding: 15px;
+}
+.panel-body a{
+    width: 100%;
+    height: 100%;
+    color: #FFFFFF;
+    text-decoration: none;
+    display: block;
+}
+.panel-footer a {
+    color: rgb(100, 100, 100);
+}
+
+.panel-footer .pull-right {
+    margin-left:4px;
+}

@@ -1,0 +1,174 @@
+{% extends "catalog/template-submit.html" %}
+{% load thumbnail filters %}
+{% load sorting_tags %}
+{% load pagination_tags %}
+{% load staticfiles %}
+{% block title %}{{settings.title}}{% endblock %}
+{% block styles %}
+
+<style>
+.label
+ {
+right: 0;
+    top:0;
+position:absolute;
+border-radius: 6px 0 6px 0;
+ }
+</style>
+{% endblock %}
+{% block js_ready %}
+	<script>
+		$(document).ready(function () {
+			odp.getTags();
+			odp.getCategories();
+
+			//odp.getApps();
+			odp.setupSearchInput();
+			odp.setupSortLinks();
+			odp.setupFilterLinks();
+		});
+
+		function confirm (resourceId){
+		    $('<div></div>').appendTo('body')
+    .html('<div><h6>Are you sure?</h6></div>')
+    .dialog({
+        modal: true,
+        title: 'Delete Item',
+        zIndex: 10000,
+        autoOpen: true,
+        width: 'auto',
+        resizable: false,
+        buttons: {
+            Yes: function () {
+                // $(obj).removeAttr('onclick');
+                // $(obj).parents('.Parent').remove();
+
+                window.location = '{% url 'catalog_base_url' %}resource/delete/'+resourceId
+
+                $(this).dialog("close");
+            },
+            No: function () {
+                $(this).dialog("close");
+            }
+        },
+        close: function (event, ui) {
+            $(this).remove();
+        }
+    });
+		}
+	</script>
+{% endblock %}
+
+{% block center_container %}
+
+
+<!--<h1 id="results_label">Gallery</h1>-->
+
+<a class="btn btn-warning  pull-right" href="{% url 'catalog_base_url' %}" ><span class="glyphicon glyphicon-arrow-left"></span> Back to catalog</a>
+        <br><br>
+	<div id="results_list" class="row">
+		<ul class="list-group">
+            <!------------------------------------------------------------------------>
+ {% if user.is_authenticated %}
+
+    {% if user.username|has_add  or perms.catalog.add_resource %}
+
+        {% if perms.catalog.add_resource %}
+            <li class="resource list-group-item row">
+                 <div class="col-md-3 col-sm-6 col-xs-12 no-col-padding badger-right badger-info">
+
+
+						<a   href="{% url 'catalog_base_url' %}submit"><img class='img-thumbnail' src="{% static 'catalog/images/submit.jpg'%}" alt="No Resource Images" ></a>
+
+                </div>
+                <div class="col-md-9">
+
+				<div id="submit_info">
+
+					<h3 id="Submit_title"><a href="{% url 'catalog_base_url' %}submit/">Submit resource</a></h3>
+
+					<h4 id="submit_desc">You can submit data sources , services , web apps and even documents into the catalog to be consumed through other cartoview apps or even served as CSW.</h4><br>
+
+            </div>
+                    </div>
+                 <div id="submit_button" style="width: 100%;float: left;">
+
+					<a class="btn btn-primary btn-danger pull-right" href="{% url 'catalog_base_url' %}submit/">Submit <span class ='glyphicon glyphicon-file'></span></a>
+				</div>
+			</li>
+            <li><hr></li>
+            {% endif  %}
+            <!-------------------------------------------------------------------------------->
+    {% if CARTOVIEW_APPS.count > 0 %}
+
+		{% for app in CARTOVIEW_APPS %}
+            {% if app.in_menu %}
+                {% if app.name|can_add in perms or app.name|has_no_perms %}
+			<li class="resource list-group-item row">
+                 <div class="col-md-3 col-sm-6 col-xs-12 no-col-padding badger-right badger-info">
+
+                {% if app.app_img %}
+
+{% thumbnail app.app_img  '300x200'   as im %}
+						<a  href="{% url 'cartoview2_base_url' %}{{app.name}}/new/"><img class="img-thumbnail" src="{{ im.url }}" alt="{{app.title}}" >
+                        </a>
+                            {% endthumbnail  %}
+
+
+					{% else %}
+						<a   href="{% url 'catalog_base_url' %}resource/{{r.id}}/{{r.name|slugify}}"><img class='img-thumbnail' src="{% static 'catalog/images/results_no_image.jpg'%}" alt="No Resource Images" ></a>
+					{% endif %}
+                </div>
+                <div class="col-md-9">
+
+				<div id="resource_info">
+                    {% if   app.new_url %}
+					<h3 id="resource_title"><a href="{% url 'cartoview2_base_url' %}{{app.name}}/new/">{{app.title}}</a></h3>
+                    {% else %}
+					<h3 id="resource_title"><a href="{% url 'cartoview2_base_url' %}{{app.name}}/">{{app.title}}</a></h3>
+                    {% endif %}
+					<h4 id="resource_desc">{{app.description|safe|default:"No description available."}}</h4>
+
+            </div>
+                    </div>
+                <div id="resource_button" style="width: 100%;float: left;">
+
+                        {% if   app.new_url %}
+					<a class="btn btn-primary pull-right" href="{% url 'cartoview2_base_url' %}{{app.name}}/new/">Create New <span class ='glyphicon glyphicon-file'></span></a>
+                        {%else %}
+					<a class="btn btn-primary btn-info pull-right" href="{% url 'cartoview2_base_url' %}{{app.name}}/">Go to App <span class ='glyphicon glyphicon-hand-right'></span></a>
+                {% endif %}
+				</div>
+			</li>
+            {% endif %}
+            {% endif %}
+		{% endfor %}
+    {% else %}
+      <li class="resource list-group-item">
+        <div class="resource error_message">
+      No items here.</div>
+
+      </li>
+    {% endif %}
+            {% else %}
+            <li class="resource list-group-item">
+        <div class="resource error_message">
+      Only authorized users are allowed to create new instances.</div>
+
+      </li>
+
+        {% endif %}
+    {% else %}
+          <li class="resource list-group-item">
+        <div class="resource error_message">
+      Only authorized users are allowed to create new instances.</div>
+
+      </li>
+
+            {% endif %}
+		</ul>
+	</div>
+
+
+
+{% endblock %}

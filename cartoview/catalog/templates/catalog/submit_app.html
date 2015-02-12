@@ -1,0 +1,39 @@
+{% extends "catalog/template-submit.html" %}
+{% load staticfiles %}
+{% load staticfiles bootstrap %}
+{% block title %} - Submit Data{% endblock %}
+{% block styles %}
+ <link href="{% static 'bootstrap-tagsinput/bootstrap-tagsinput.css' %}" rel="stylesheet">
+<link href="{% static 'typeahead/typeahead.css' %}" rel="stylesheet">
+
+{% endblock %}
+{% block js_ready %}
+	<script>
+		$(document).ready(function () {
+			odp.setupSearchInput();
+		});
+	</script>
+{% endblock %}
+
+{% block center_container %}
+        <a class="btn btn-warning  pull-right" href="{% url 'catalog_base_url' %}" ><span class="glyphicon glyphicon-arrow-left"></span> Back to catalog</a>
+        <br><br>
+    <form id='addForm' class="form-horizontal" role="form" method="post" enctype="multipart/form-data" > {% csrf_token %}
+     {{urlimage_form|bootstrap_horizontal}}
+
+
+        <div class="pull-right">
+        <button class="btn btn-primary pull-right" title="next" type="submit">Submit</button> &nbsp
+            <input class="btn btn-info" type="reset" value="reset" onclick="window.location='{{current_path}}'"/>&nbsp
+        </div>
+	</form>
+{% endblock %}
+
+
+  {% block scripts %}
+  <script type="text/javascript">
+
+
+
+	</script>
+{% endblock scripts %}

@@ -1,0 +1,42 @@
+{% extends "catalog/template-submit.html" %}
+{% load staticfiles %}
+{% load staticfiles bootstrap %}
+{% block title %}Catalog settings{% endblock %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'select2/select2.css' %}"/>
+<style>
+      .select2-container
+    {
+    width:250px
+    }
+    #id_settings_form-resources_per_page
+    {width:100px}
+</style>
+
+{% endblock %}
+{% block js_ready %}
+<script>
+		$(document).ready(function () {
+			odp.setupSearchInput();
+		});
+	</script>
+
+{% endblock %}
+
+{% block center_container %}
+    <form id='addForm' class="form-horizontal" role="form" method="post" enctype="multipart/form-data" > {% csrf_token %}
+    {{settings_form|bootstrap_horizontal}}
+    {% include "cartoview2/snippets/permissions.html" %}
+
+        <div class="pull-right">
+            <input class="btn btn-primary" type="submit" value="submit"/>
+        </div>
+	</form>
+    <script type="text/javascript" src="{% static 'select2/select2.js' %}"></script>
+<script type="text/javascript" src="{% static 'forms_custom/autocomplete_multiple.js' %}"></script>
+
+{% endblock %}
+
+  {% block scripts %}
+
+{% endblock scripts %}

@@ -1,0 +1,5 @@
+DATABASE = 'cartoview2'
+USER = 'postgres'
+PASSWORD = 'postgis'
+HOST = 'localhost'
+PORT = '5432'

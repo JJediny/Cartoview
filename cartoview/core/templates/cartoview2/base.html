@@ -1,0 +1,111 @@
+{% load i18n %}
+{% load account %}
+{% load staticfiles %}
+{% load url from future %}<!DOCTYPE html>
+<html>
+   <head>
+      {% block meta %}{% endblock meta %}
+      <title>{% block page_title %}{% endblock page_title %}</title>
+      <!-- Bootstrap -->
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <link rel="icon" href="{% static 'images/cartoview.png' %}" >
+      <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+      <link href="{% static 'jquery-ui/css/smoothness/jquery-ui.min.css' %}" rel="stylesheet" media="screen">
+      <link href="{% static 'jquery-ui/css/smoothness/jquery.ui.theme.css' %}" rel="stylesheet" media="screen">
+      <link href="{% static 'jasny-bootstrap/css/jasny-bootstrap.min.css' %}" rel="stylesheet" media="screen">
+      <link href="{% static 'cartoview2/css/base.css' %}" rel="stylesheet" media="screen">
+      <link href="{% static 'cartoview2/css/yamm.css' %}" rel="stylesheet" media="screen">
+
+       <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+      <link href="{% static 'login.css' %}" rel="stylesheet">
+      <style type="text/css">
+         /*.img-responsive{width:100%;}*/
+		 .navmenu-fixed-left {overflow-y: auto; overflow-x: hidden;}
+          {% if embed_page %}
+            body {
+              padding-top: 10px;
+            }
+          {% endif %}
+      </style>
+      {% block styles %}
+      {% endblock styles %}
+       <script src="{% static 'jquery-1.10.2.min.js' %}"></script>
+   </head>
+   <body>
+      {% if not embed_page %}
+          {% include 'cartoview2/snippets/base_side_menu.html' %}
+          {% include 'cartoview2/snippets/user_area.html' %}
+          <div class="navbar yamm navbar-default">
+             {% block settings_menu %}
+             <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target="#myNavmenu" data-canvas="body" style="display:block;float:left;margin-left:15px">
+                 <span class="icon-bar"></span>
+                 <span class="icon-bar"></span>
+                 <span class="icon-bar"></span>
+             </button>
+             {% endblock settings_menu %}
+             <a id='ct-title' class="navbar-brand" href="">{% block title %}{{site_settings_title}}{% endblock title %}</a>
+
+             <div  class="hidden-xs  pull-right">
+                {% block top-bar %}{% endblock %}
+             </div>
+             <div  class="visible-xs navbar-brand  pull-right">
+                <li class="dropdown yamm-fw visible-xs pull-right">
+                   <a class="dropdown-toggle glyphicon glyphicon-search" href="#" data-toggle="dropdown"><strong class="caret"></strong></a>
+                   <div class="dropdown-menu  "  style=" left:auto;right: 0;">
+                      <form class=".col-xs-12" role="search" >
+                         <div  class="input-group yamm-content " >
+                            <input type="text" class="form-control" placeholder="Search" name="q">
+                            <div class="input-group-btn">
+                               <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                            </div>
+                         </div>
+                      </form>
+                   </div>
+                </li>
+             </div>
+          </div>
+      {% endif %}
+      <div id="ct-content" class="container">
+         {% block content %} {% endblock %}
+      </div>
+      {% if not embed_page %}
+        {% include 'cartoview2/snippets/base_footer.html' %}
+      {% endif %}
+      <!-- JavaScript -->
+      <script>
+         var CARTOVIEW2_BASE_URL = "{% url 'cartoview2_base_url' %}";
+         var CORE_BASE_URL = "{% url 'cartoview2_base_url' %}core/";
+         var REST_URL = "{% url 'cartoview2_rest_url' %}";
+		//$(".navmenu-fixed-left").height(Math.max($(document).height(), $(window).height()));
+		$(".navmenu-fixed-left").height($(window).height());
+		$(window).resize(function() {
+			//$(".navmenu-fixed-left").height(Math.max($(document).height(), $(window).height()));
+			$(".navmenu-fixed-left").height($(window).height());
+		});
+      </script>
+      <script src="{% static 'jquery-ui/js/jquery-ui-1.10.4.min.js' %}"></script>
+      <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+      <script src="{% static 'jasny-bootstrap/js/jasny-bootstrap.js' %}"></script>
+      <script src="{% static 'bootstrapValidator.min.js' %}"></script>
+      <script src="{% static 'utils.js' %}"></script>
+
+      {% if embed_page %}
+        <script type="text/javascript">
+        $(function(){
+            $('a').each(function(){
+                var a = $(this);
+                var href = a.attr('href');
+                if(href.indexOf('?embed') == -1 && href.indexOf('&embed') == -1 && href.indexOf('#') != 0){
+                    if(href.indexOf('?') == -1)
+                        href += '?embed';
+                    else
+                        href += '&embed';
+                    a.attr('href',href);
+                }
+            })
+        });
+        </script>
+      {% endif %}
+      {% block scripts %}{% endblock scripts %}
+   </body>
+</html>

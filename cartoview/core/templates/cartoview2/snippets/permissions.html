@@ -1,0 +1,24 @@
+{% load bootstrap %}
+{{permissions_form.management_form}}
+{% for form in permissions_form %}
+        <legend>{{form.title}}</legend>
+            {{form|bootstrap_horizontal}}
+         <script type="text/javascript">
+
+            if ( $("input:radio[name={{form.permitted.html_name }}]:checked").val() != 'specific')
+
+                  $("#{{form.permitted_users.auto_id}}").attr('disabled','disabled')
+
+            $("input:radio[name={{form.permitted.html_name }}]").on("click", function() {
+
+                if ( $(this).val() == 'specific')
+
+                    $("#{{form.permitted_users.auto_id}}").removeAttr('disabled')
+                else
+                     $("#{{form.permitted_users.auto_id}}").attr('disabled','disabled')
+
+                });
+
+        </script>
+{% endfor %}
+

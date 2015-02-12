@@ -1,0 +1,70 @@
+{% extends "cartoview2/base.html" %}
+{% block content %}
+     <div class="col-md-3">
+        <div id="ct-sidebar" class="list-group">
+           {% block sidebar %}{% endblock sidebar %}
+        </div>
+    </div>
+	{%block before_cards %}{%endblock%}
+    <div id="ct-cards" class="col-md-9 well">
+        {% block cards %}
+        {% endblock cards %}
+    </div>
+	{%block after_cards %}{%endblock%}
+    {% block other_content %}
+    {% endblock other_content %}
+{% endblock content %}
+{% block scripts %}
+     <script type="text/javascript">
+        $(function(){
+            $('#ct-cards .card').hide();
+            $($('#ct-sidebar a.active').attr('href')).show();
+            $('#ct-sidebar a').click(function(e){
+             if($(e.target).hasClass('external')) {
+        window.location.href = $(e.target).attr('href');
+        return;
+    }
+    else {
+                e.preventDefault();
+                $('#ct-cards .card').hide();
+                $('#ct-sidebar a').removeClass('active');
+                $(this).addClass('active')
+                $(document).scrollTop(0);
+                $($(this).attr('href')).fadeToggle();
+                }
+            });
+
+        })
+    var card_activated = false;
+        $(".card").each(function() {
+    var current_card = $(this);
+    $(this).find("*").each (function() {
+
+        if ($(this).hasClass("has-error"))
+        {
+
+            var search_txt = "a[href='#" + current_card.attr('id') + "']" ;
+            var listElement = $(search_txt);
+            if(listElement.find('span.error').length == 0)
+            listElement.append("<span class='glyphicon glyphicon-exclamation-sign pull-right error'></span>");
+
+            /*if (! card_activated)
+            {
+                $('#ct-cards .card').hide();
+                $('#ct-sidebar a').removeClass('active');
+                listElement.addClass('active')
+                current_card.show();
+                card_activated = true;
+            }*/
+        }
+
+  })
+
+    });
+
+
+ </script>
+    {% block more_scripts %}{% endblock more_scripts %}
+{% endblock scripts%}
+
+

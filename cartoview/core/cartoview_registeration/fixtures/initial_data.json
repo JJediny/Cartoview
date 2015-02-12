@@ -1,0 +1,52 @@
+[{
+    "pk": 1,
+    "model": "sites.site",
+    "fields": {
+        "domain": "127.0.0.1:8000",
+        "name": "cartoview2"
+    }
+}, {
+    "pk": 1,
+    "model": "socialaccount.socialapp",
+    "fields": {
+        "name": "Facebook",
+        "sites": [1],
+        "secret": "a2cb0288254d17243c749ba3baf8bc39",
+        "client_id": "679805882082284",
+        "key": "",
+        "provider": "facebook"
+    }
+}, {
+    "pk": 2,
+    "model": "socialaccount.socialapp",
+    "fields": {
+        "name": "Twitter",
+        "sites": [1],
+        "secret": "r8GYC84dch4bK7NgzXoxm2Vw76743UAyMnZCdJe3E",
+        "client_id": "E81SM6uMHlztfQeVmDgtpw",
+        "key": "",
+        "provider": "twitter"
+    }
+}, {
+    "pk": 3,
+    "model": "socialaccount.socialapp",
+    "fields": {
+        "name": "Google",
+        "sites": [1],
+        "secret": "lnx_lDedO2lMznmFJp6ZHxcW",
+        "client_id": "575027291035-qd7fd0ruok1aotq1f7q65ephlki558s4.apps.googleusercontent.com",
+        "key": "",
+        "provider": "google"
+    }
+}, {
+    "pk": 7,
+    "model": "socialaccount.socialapp",
+    "fields": {
+        "name": "LinkedIn",
+        "sites": [1],
+        "secret": "FSkQLcMIkGMgELQI",
+        "client_id": "77lchqyqvq2cls",
+        "key": "",
+        "provider": "linkedin_oauth2"
+    }
+}]

@@ -1,0 +1,92 @@
+{% load staticfiles %}
+{% load i18n %}
+{% load account %}
+<nav id="ct-user-panel" class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation" style="padding-top:60px">
+ <div class="navbar-content">
+    <div class="row">
+       <div class="col-md-5">
+			{% url 'profile-settings' as profile_url %}
+	        {% if profile_url %}			
+				<a href="{% url 'profile-picture' %}">
+				{% if user.socialaccount_set.all.0.get_avatar_url %}
+					<img src= "{{user.socialaccount_set.all.0.get_avatar_url }}" alt="Alternate Text" class="img-responsive" />
+				{% else %}
+					{% if user.profile %}
+						<img src= "{{ user.profile.get_picture }}" alt="Profile Image" class="img-responsive" />
+					{% else %}
+						<img src= "{% static 'images/user.png' %}" alt="Profile Image" class="img-responsive" />
+					{%endif%}
+				{%endif%}
+			{% else %}
+			<img src= "{% static 'images/user.png' %}" alt="Profile Image" class="img-responsive" />
+			{%endif%}
+            </a>
+			<br/>
+       </div>
+       <div class="col-md-7">
+          <span>{{user.socialaccount_set.all.0.get_provider_account}}</span>
+          <p class="text-muted small">
+             {% firstof user.socialaccount_set.all.0.extra_data.email user.socialaccount_set.all.0.extra_data.emailAddress %}
+          </p>
+          <div class="divider">
+          </div>
+		  {% if profile_url and user.username %}
+          <a href="{% url 'profile-profile' user.username %}" class="btn btn-primary btn-sm active">View Profile</a>
+		  {%endif%}
+       </div>
+    </div>
+ </div>
+ <div class="navbar-footer">
+    <div class="navbar-footer-content">
+       <div class="row">
+          <div class="col-md-6">
+            {% if user.has_usable_password %}
+				{% if profile_url or user.profile %}
+					<a href="{% url 'profile-password' %}" class="btn btn-default btn-sm">{% trans 'Change password' %}</a>
+				{% else %}
+					<a href="{% url 'cartoview2_base_url' %}accounts/password/change/" class="btn btn-default btn-sm">{% trans 'Change password' %}</a>
+				{% endif %}
+            {% endif %}
+          </div>
+          <div class="col-md-6">
+             <a href="{% url 'cartoview2_base_url' %}accounts/logout/?next={{ request.path }}" class="btn btn-default btn-sm pull-right">{% trans 'Log out' %}</a>
+          </div>
+       </div>
+    </div>
+ </div>
+</nav>
+<!-------------------------------LOGIN FORM------------------------------------>
+<nav id="ct-log-in" class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation" style="padding-top:60px">
+ <div class="navbar-content text-center" >
+    <script id="metamorph-1-start" type="text/x-placeholder"></script><script id="metamorph-21-start" type="text/x-placeholder"></script>
+    <form class="form-signin"  method="POST" action="{% url 'account_login' %}?next={{ request.path }}">
+       {% csrf_token %}
+        {% if social_registration_settings.enable_social %}
+       <small class="text-muted" style="font-size: 18px;">Connect Cartoview with your favorite social network</small>
+       <p>
+          <a class="btn btn-primary social-login-btn social-facebook" href="{% url 'cartoview2_base_url' %}accounts/facebook/login/?process=login&next={{ request.path }}"><i class="fa fa-facebook"></i></a>
+          <a class="btn btn-primary social-login-btn social-twitter" href="{% url 'cartoview2_base_url' %}accounts/twitter/login/?process=login&next={{ request.path }}"><i class="fa fa-twitter"></i></a>
+       </p>
+       <p>
+          <a class="btn btn-primary social-login-btn social-linkedin"  href="{% url 'cartoview2_base_url' %}accounts/linkedin_oauth2/login/?process=login&next={{ request.path }}"><i class="fa fa-linkedin"></i></a>
+          <a class="btn btn-primary social-login-btn social-google" href="{% url 'cartoview2_base_url' %}accounts/google/login/?process=login&next={{ request.path }}"><i class="fa fa-google-plus"></i></a>
+       </p>
+       <small class="text-muted" style="font-size: 18px;">Or sign in with Cartoview account</small>
+       <br><br>
+        {% endif %}
+       <input id="id_login" class="ember-view ember-text-field form-control login-input" name="login" placeholder="Username" type="text">
+        <br/>
+
+       <input id="id_password" class="ember-view ember-text-field form-control login-input-pass" name="password" placeholder="Password" type="password">
+       {% if redirect_field_value %}
+       <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+       {% endif %}
+         <a class="" href="{% url 'account_reset_password' %}">Forgot password?</a>
+        <br/>
+       <button class="btn btn-lg btn-primary btn-block btn-center" type="submit">Sign in</button>
+       <br>
+       <small class="create-account text-muted"  style="font-size: 18px;">Don't have a Cartoview or social network account? &nbsp;<a href="{% url 'account_signup' %}">Sign up</a> </small>
+    </form>
+ </div>
+</nav>
+<!---------------------------------------------------------------------------->

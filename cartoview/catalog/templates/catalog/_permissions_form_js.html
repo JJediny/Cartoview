@@ -1,0 +1,293 @@
+{% load i18n %}
+<script type="text/javascript">
+$.fn.serializeObject = function() {
+    var o = {};
+    var a = this.serializeArray();
+
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+
+ $(document).ajaxSend(function(event, xhr, settings) {
+    function getCookie(name) {
+        var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+          var cookie = $.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function sameOrigin(url) {
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+      return (url == origin || url.slice(0, origin.length + 1) == origin + '/') || (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+
+    function safeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+  });
+
+  function permissionsString(form, type) {
+    var permissions = {
+      'users': {},
+      'groups': {}
+    }
+    if (typeof form === 'string'){
+      form = $(form);
+    }
+    var data = form.serializeObject();   
+
+    /*
+    * If there's the anonymous user then set it's view permission and pop it
+    */
+    if (data.hasOwnProperty('view_anonymous')) {
+      permissions['users']['AnonymousUser'] = ['view_resource'];
+      delete data['view_anonymous'];
+    }
+
+    /*
+    * Cycle through permissions to map the form structure perm = ['user1',',user2'] to
+    * the geonode user = ['perm1','perm2'], the same for groups
+    */
+    for(var perm in data){
+      if(data[perm][0] !== ''){
+        for (var i=0;i<data[perm][0].split(',').length;i++){
+          var user = data[perm][0].split(',')[i];
+          if(permissions['users'].hasOwnProperty(user)){
+            permissions['users'][user].push(perm);
+          }else{
+            permissions['users'][user] = [perm];
+          }
+        }
+      }
+
+      if(data[perm][1] !== ''){
+        for (var i=0;i<data[perm][1].split(',').length;i++){
+          var group = data[perm][1].split(',')[i];
+          if(permissions['groups'].hasOwnProperty(group)){
+            permissions['groups'][group].push(perm);
+          }else{
+            permissions['groups'][group] = [perm];
+          }
+        }
+      }
+    }
+
+    return permissions
+  };
+
+  $(function() {
+
+    $('#permissions-body').ready(function(){
+      {% if resource %}
+      $.ajax(
+        "{% url "resource_permissions" resource.id %}",
+        {
+          success: function(data){
+            var perms = $.parseJSON($.parseJSON(data).permissions);
+
+            /*
+            * Compile the users fields after receiving the current permissions status from the server
+            */
+            var users = {
+              view_resource: [],
+              change_resource: [],
+              //change_resourcebase_permissions: []
+            };
+            var perms_users = perms.users;
+            for (var user in perms_users){
+              var user_perms = perms_users[user];
+              if (user === 'AnonymousUser'){
+                $('#perms_view_anyone').attr("checked", "checked");
+              }else{
+                for (var i=0;i<user_perms.length;i++){
+                  if(users.hasOwnProperty(user_perms[i])){
+                    users[user_perms[i]].push(user);
+                  }
+                }
+              }          
+            }
+            // If "anyone" is checked then don't show all the users in the view perms field
+            if (perms_users.hasOwnProperty('AnonymousUser')){users.view_resource=[]};
+            
+            for (var perm in users){
+              $('#' + perm + '_users').val(users[perm].join());
+            }
+            addSelectUsers();
+
+            /*
+            * Compile the groups fields after receiving the current permissions status from the server
+            */
+            var groups = {
+              view_resource: [],
+              change_resource: [],
+              manage_resource: []
+            };
+            var perms_groups = perms.groups;
+            for (var group in perms_groups){
+              if (group !== 'registered'){
+                var group_perms = perms_groups[group];
+                for (var i=0;i<group_perms.length;i++){
+                  groups[group_perms[i]].push(group);
+                }
+              }
+            }
+            for (var perm in groups){
+              $('#' + perm + '_groups').val(groups[perm].join());
+            }
+            addSelectGroups();
+
+          }
+        }
+      );
+      {% else %}
+      addSelectUsers();
+      addSelectGroups();
+      {% endif %}
+    });
+    
+    function addSelectUsers(){
+      $("input.user-select").select2({
+        placeholder: '{% trans "Choose users..." %}',
+        minimumInputLength: 1,
+        multiple: true,
+        width: 'copy',
+        ajax: {
+          url: "{% url "account_ajax_lookup" %}",
+          dataType: "json",
+          type: "POST",
+          data: function (term, page) {
+            return {
+              query: term,
+            };
+          },
+          results: function (data, page) {
+            return {results: data.users};
+          }
+        },
+        id: userID,
+        formatResult: userFormatResult,
+        formatSelection: userFormatSelection,
+        initSelection: function(element, callback) {
+          var data = [];
+          var val = element.val().split(",");
+          $(element.val().split(",")).each(function (index,value) {
+              data.push({username: value});
+          });
+          callback(data);
+        }
+      });
+    }
+
+    function addSelectGroups(){
+      $("input.group-select").select2({
+        placeholder: '{% trans "Choose groups..." %}',
+        minimumInputLength: 1,
+        multiple: true,
+        width: 'copy',
+        ajax: {
+          url: "{% url "account_ajax_lookup" %}",
+          dataType: "json",
+          type: "POST",
+          data: function (term, page) {
+            return {
+              query: term,
+            };
+          },
+          results: function (data, page) {
+            return {results: data.groups};
+          }
+        },
+        id: groupID,
+        formatResult: groupFormatResult,
+        formatSelection: groupFormatSelection,
+        initSelection: function(element, callback) {
+          var data = [];
+          var val = element.val().split(",");
+          $(element.val().split(",")).each(function (index,value) {
+              data.push({name: value});
+          });
+          callback(data);
+        }
+      });
+    }
+    
+    function userID(user) {
+      return user.username;
+    }
+
+    function groupID(group) {
+      return group.name;
+    }
+
+    function userFormatResult(user) {
+      return user.username;
+    }
+
+    function userFormatSelection(user) {
+        return user.username;
+    }
+
+    function groupFormatResult(group) {
+      return group.name;
+    }
+
+    function groupFormatSelection(group) {
+        return group.name;
+    }
+
+
+    var perms_submit = function() {
+      var form = $(this);
+      var action = form.attr("action");
+
+      var permissions = permissionsString(form, 'base');
+      $.ajax(
+        {
+          type: "POST",
+          url: action,
+          data: JSON.stringify(permissions),
+          success: function(data) {
+            $("#modal_perms").modal("hide");
+          }
+        }
+      );
+      return false;
+    };
+
+    $("#perms_submit").click(function(){
+        $("#permission_form").submit();
+    });
+    {% if resource %}
+    $("#permission_form").submit(perms_submit);
+    {% endif %}
+  });
+</script>

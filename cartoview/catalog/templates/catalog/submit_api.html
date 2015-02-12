@@ -1,0 +1,75 @@
+{% extends "catalog/template-submit.html" %}
+{% load staticfiles %}
+{% load staticfiles bootstrap %}
+{% block title %} - Submit Data{% endblock %}
+{% block styles %}
+ <link href="{% static 'bootstrap-tagsinput/bootstrap-tagsinput.css' %}" rel="stylesheet">
+<link href="{% static 'typeahead/typeahead.css' %}" rel="stylesheet">
+
+{% endblock %}
+{% block js_ready %}
+	<script>
+		$(document).ready(function () {
+			odp.setupSearchInput();
+		});
+	</script>
+{% endblock %}
+
+{% block center_container %}
+        <a class="btn btn-warning  pull-right" href="{% url 'catalog_base_url' %}" ><span class="glyphicon glyphicon-arrow-left"></span> Back to catalog</a>
+        <br><br>
+    <form id='addForm' class="form-horizontal" role="form" method="post" enctype="multipart/form-data" > {% csrf_token %}
+     {{url_form.provider|bootstrap_horizontal}}
+     {{url_form.service_type|bootstrap_horizontal}}
+     {{urlimage_form|bootstrap_horizontal}}
+
+
+        <div class="pull-right">
+        <button class="btn btn-primary pull-right" title="next" type="submit">Submit</button> &nbsp
+            <input class="btn btn-info" type="reset" value="reset" onclick="window.location='{{current_path}}'"/>&nbsp
+        </div>
+	</form>
+{% endblock %}
+
+
+  {% block scripts %}
+  <script type="text/javascript">
+
+{% if not url_form.service_type.value %}
+    $("#id_url_form-service_type").attr('disabled', true);
+
+{% else %}
+
+    var service_type = {{url_form.service_type.value}} ;
+    var provider = {{url_form.provider.value}} ;
+    $.getJSON("{% url 'cartoview2_base_url' %}" + "rest/catalog/servicetype/?format=json&provider__id="+provider, function(response) {
+
+        var options = '<option>---------- </option>';
+        for (var i = 0; i < response.objects.length; i++) {
+          options += '<option value="' + parseInt(response.objects[i].id) + '">' + response.objects[i].service_type + '</option>';
+        }
+        $("#id_url_form-service_type").html(options);
+        $("#id_url_form-service_type").val(service_type);
+      })
+
+
+{% endif %}
+
+
+    $("select#id_url_form-provider").change(function(){
+
+      $.getJSON("{% url 'cartoview2_base_url' %}" + "rest/catalog/servicetype/?format=json&provider__id="+$(this).val(), function(response) {
+
+        var options = '<option>---------- </option>';
+        for (var i = 0; i < response.objects.length; i++) {
+          options += '<option value="' + parseInt(response.objects[i].id) + '">' + response.objects[i].service_type + '</option>';
+        }
+        $("#id_url_form-service_type").html(options);
+        $("#id_url_form-service_type option:first").attr('selected', 'selected');
+        $("#id_url_form-service_type").attr('disabled', false);
+      })
+      $("#id_url_form-provider").attr('selected', 'selected');
+    })
+
+	</script>
+{% endblock scripts %}

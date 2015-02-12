@@ -1,0 +1,59 @@
+.icon-picker{
+    position: relative;
+}
+.icon-picker .dropdown-menu{
+    position: absolute;
+    z-index: 999;
+    width: 410px;
+    padding-left: 1px;
+}
+.icon-picker ul li{
+    float:left;
+    width: auto;
+}
+.icon-picker ul li a{
+    width: 45px;
+    height: 45px;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+    line-height: 45px;
+}
+
+.icon-picker span.caret{
+    margin-left: 10px;
+}
+.point-styler .nav-pills,
+.leaflet-styler .nav-pills{
+    padding: 0px;
+}
+.point-styler .nav-pills>li,
+.leaflet-styler .nav-pills>li{
+    margin: 0px;
+}
+.point-styler .nav-pills>li>a,
+.leaflet-styler .nav-pills>li>a {
+    margin: 0px;
+    border: 1px solid #ddd;
+    padding: 5px 16px;
+    border-radius: 0px;
+    
+}
+
+.svg-line-ct{
+  height: 24px;
+  width: 220px;
+  background-color: #FFF;
+  border: 2px solid #FFF;
+  position: relative;
+}
+.svg-line-ct a{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.svg-dasharray div.active{
+    border-color: #00F;
+}

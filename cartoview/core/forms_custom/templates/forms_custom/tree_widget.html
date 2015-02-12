@@ -1,0 +1,27 @@
+{% load i18n %}
+
+<div class="tree_widget">
+    
+    {% if 'readonly' not in attrs %}
+        <a href="#" onClick="edit_tree_field('{{attrs.id}}', '{% url 'forms_custom:tree_widget' application=application model_name=model_name %}');" id="{{attrs.id}}_title">
+            {% if value %}
+                {% for node in value.get_ancestors %}{{ node }} /{% endfor %}
+                {{ value }}
+            {% else %}
+                Не выбрано
+            {% endif %}
+        </a>
+        <a href="#" onclick="tree_field_clear('{{attrs.id}}');"><span class="glyphicon glyphicon-remove"></span></a>
+    {% else %}
+        {% if value %}
+                {% for node in value.get_ancestors %}{{ node }} /{% endfor %}
+                {{ value }}
+            {% else %}
+                {% trans 'Not selected' %}
+            {% endif %}
+    {% endif %}
+    
+
+    <input type="hidden" id="{{attrs.id}}" value="{{value.id}}" name="{{name}}">
+    
+</div>

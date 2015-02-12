@@ -1,0 +1,30 @@
+[{
+		"pk" : 1,
+		"model" : "core.homepage",
+		"fields" : {
+			"name" : "catalog",
+			"title" : "Catalog"
+		}
+	}, {
+		"pk" : 3,
+		"model" : "core.homepage",
+		"fields" : {
+			"name" : "home_2",
+			"title" : "App launcher"
+		}
+	}, {
+		"pk" : 4,
+		"model" : "core.homepage",
+		"fields" : {
+			"name" : "featured",
+			"title" : "Featured resources"
+		}
+	}, {
+		"pk" : 5,
+		"model" : "core.homepage",
+		"fields" : {
+			"name" : "home_1",
+			"title" : "App tiles"
+		}
+	}
+]

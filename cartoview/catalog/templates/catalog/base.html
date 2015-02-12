@@ -1,0 +1,63 @@
+{% extends "cartoview2/base.html" %}
+	{% load staticfiles %}
+		{% block page_title %}{{settings_obj.title}} {% block title%}{% endblock %} {% endblock %}
+            {% block scripts %}
+                {% block tophead %}
+                {% endblock %}
+
+                <!--<script type="text/javascript" src="{% static 'catalog/jquery-1.5.2.js'%}"></script>-->
+                <!--<script type="text/javascript" src="{% static 'catalog/jQueryUI/js/jquery-ui-1.8.11.min.js'%}"></script>-->
+                <script type="text/javascript" src="{% static 'catalog/StarRating/jquery.rating.js'%}"></script>
+                <script type="text/javascript" src="{% static 'catalog/jquery.query-2.1.7.js'%}"></script>
+                <script type="text/javascript" src="{% static 'catalog/odp.js'%}"></script>
+
+          <!--&lt;!&ndash; TYPEKIT &ndash;&gt;-->
+          <!--<script type="text/javascript" src="http://use.typekit.com/nni2gly.js"></script>-->
+          <!--<script type="text/javascript">try{Typekit.load();}catch(e){}</script>-->
+                <link rel="stylesheet" href="{% static 'catalog/reset.css'%}" type="text/css"/>
+                <link rel="stylesheet" href="{% static 'catalog/StarRating/jquery.rating.css'%}" type="text/css"/>
+                <!--<link rel="stylesheet" href="{% static 'catalog/jQueryUI/css/jquery.ui.base.css'%}" type="text/css"/>-->
+                <link rel="stylesheet" href="{% static 'catalog/odp.css'%}" type="text/css"/>
+
+
+                <script type="text/javascript">
+                    odp.site_root = "{% url 'catalog_base_url' %}";
+                    odp.rest_url = "{% url 'cartoview2_base_url' %}";
+                </script>
+
+                {% block js_ready %}
+
+                {% endblock %}
+
+                {% block bottomhead %}
+                {% endblock %}
+
+                <script type="text/javascript">
+
+                  var _gaq = _gaq || [];
+                  //_gaq.push(['_setAccount', 'UA-XXXXXXXXX']);
+                  //_gaq.push(['_trackPageview']);
+
+                  //(function() {
+                  //  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                  //  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                  //  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                  //})();
+
+                </script>
+            {% endblock %}
+	{% block content %}
+    	<div id="wrapper">
+
+    		{% block catalog_content %}
+		    	main content goes here
+            {% endblock %}
+
+    	</div>
+	{% block endpage %}
+
+	{% endblock %}
+    {% endblock %}
+
+
+

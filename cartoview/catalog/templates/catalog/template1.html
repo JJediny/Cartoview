@@ -1,0 +1,44 @@
+{% extends "catalog/base.html" %}
+
+{% block js_ready %}
+	<script>
+		$(document).ready(function () {
+			odp.getTags();
+			odp.getCategories();
+
+			//odp.getApps();
+			odp.setupSearchInput();
+		});
+	</script>
+{% endblock %}
+
+          {% block top-bar%}
+    {% include "catalog/searchbar.html" %}
+        {% endblock top-bar %}
+
+{% block content %}
+
+
+
+{% if settings.show_categories_panel or settings.show_tags_panel  %}
+
+	<div id="center_container" class="home col-md-10 col-md-push-2">
+
+{% else %}
+      <div id="center_container" class="home col-md-10 ">
+
+ {% endif %}
+
+		<div id="center_content">
+			{% block center_container %}
+			{% endblock %}
+		</div>
+
+	</div>
+
+    {% include "catalog/sidebar.html" %}
+
+  {% include "catalog/footer.html" %}
+
+{% block extra_script %}{% endblock extra_script %}
+{% endblock %}

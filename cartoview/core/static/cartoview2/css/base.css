@@ -1,0 +1,84 @@
+body {
+		  /*padding-top: 70px*/
+		  height:100%;
+		}
+
+		html{height:100%;}
+
+
+		.thumbnail img {
+		  width: 100%;
+		}
+
+		.ratings {
+		  color: #d17581;
+		  padding-left: 10px;
+		  padding-right: 10px;
+		}
+
+		.thumbnail {
+		  padding: 0;
+		}
+
+		.thumbnail .caption-full {
+		  padding: 9px;
+		  color: #333;
+		}
+
+		/* Flip around the padding for proper display in narrow viewports */
+.navbar-wrapper .container {
+  padding-left: 0;
+  padding-right: 0;
+}
+.navbar-wrapper .navbar {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.navbar-content
+{
+	width:320px;
+	padding: 15px;
+	padding-bottom:0px;
+}
+.navbar-content:before, .navbar-content:after
+{
+	display: table;
+	content: "";
+	line-height: 0;
+}
+.navbar-nav.navbar-right:last-child {
+margin-right: 15px !important;
+}
+.navbar-footer
+{
+	background-color:#DDD;
+}
+.navbar-footer-content { padding:15px 15px 15px 15px; }
+.dropdown-menu {
+padding: 0px;
+overflow: hidden;
+}
+		.form-control, .btn, .well,.list-group-item:first-child,.list-group-item:last-child { border-radius: 0; }
+		/*.navbar-inverse {
+			color: #fff;
+			background-color: #428bca;
+			border-color: #428bca;
+		}*/
+#apps-side-menu li{
+  position: relative;
+}
+
+#apps-side-menu li div.app-actions{
+  position: absolute;
+  top:10px;
+  right: 20px;
+}
+
+.error {
+	color: #A94442;
+}
+
+.has-error .input-group-btn {
+	vertical-align: top !important;
+}

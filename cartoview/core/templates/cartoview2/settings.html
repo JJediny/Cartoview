@@ -1,0 +1,556 @@
+ {% extends "cartoview2/base_sidebar.html" %}
+{% load bootstrap %}
+{% load staticfiles %}
+{% block page_title %}{{site_settings_title}} - Settings{% endblock page_title %}
+{% block title %}{{site_settings_title}} - Settings{% endblock %}
+{% block styles %}
+<style type="text/css">
+    .l2{
+    padding-left: 30px;
+    }
+    .panel-heading a:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e114";
+    float: right;
+    color: 'grey';
+    }
+    .panel-heading a.collapsed:after {
+    content: "\e080";
+    }
+
+    tr:first-of-type a.up {
+        visibility: hidden;
+
+    }
+    tr:nth-last-child(1) a.down {
+        visibility: hidden;
+    }
+
+    a.up:hover, a.down:hover{text-decoration:none; cursor:pointer;}
+	#ct-cards { min-width: 560px;}
+
+</style>
+<link href="{% static 'bootstrap-sortable/css/bootstrap-sortable.css' %}" rel="stylesheet">
+ <link href="{% static 'app.css' %}" rel="stylesheet" media="screen">
+
+{% endblock styles %}
+
+{% block sidebar %}
+	<a href="#ct-site" class="list-group-item active">Site</a>
+    	<!--<a href="#ct-home" class="list-group-item">Home page</a>-->
+
+	<!--<a href="#ct-home" class="list-group-item">Home Page</a>-->
+	<!--<a href="#ct-registration" class="list-group-item">Registration</a>-->
+	<a id="btn-apps" href="#ct-apps" class="list-group-item">Apps</a>
+    <!--<a href="#ct-sidemenu" class = "list-group-item">App Launcher</a>-->
+    <!--<a href="{% url 'admin:index' %}"  class = "list-group-item external">Django Admin</a>-->
+{% endblock sidebar %}
+{% block cards %}
+<!--<div id="ct-site" class="card">-->
+	<!--{% include "cartoview2/tastypie_ajax_form.html" with form=site_form form_name="site" method="PATCH" %}-->
+<!--</div>-->
+
+<div id="ct-site" class="card">
+<form id="Homeform" class="form-horizontal"  method="post" role="form">{% csrf_token %}
+    <div class="form-group">
+<input type="button" class=" btn btn-primary  pull-right " style="margin-right:15px" value="Save" onclick="save_site_form()"/> </div>
+       {{site_form|bootstrap_horizontal}}
+        {{homepage_form|bootstrap_horizontal}}
+        {{reg_settings_form|bootstrap_horizontal}}
+        {{carto_settings_form|bootstrap_horizontal}}
+<div class="form-group">
+
+
+            <label class="control-label col-sm-2 col-lg-2 " for="id_version">Cartoview version</label>
+
+
+        <div class=" col-sm-10 col-lg-10 ">
+<p id ="id_version" class = "form-control-static">{{carto_version}}</p>
+        </div>
+
+</div>
+
+</form>
+
+</div>
+<!--<div id="ct-home" class="card">-->
+	<!--{% include "cartoview2/tastypie_ajax_form.html" with form=home_form form_name="home" method="PATCH" %}-->
+<!--</div>-->
+<!--<div id="ct-registration" class="card">-->
+    <!--<form id="Socialappform" class="form-horizontal" role="form">{% csrf_token %}-->
+        <!--<button class="btn btn-primary pull-right" title="Save" type="submit">Save</button>-->
+        <!--{{reg_settings_form|bootstrap}}-->
+
+
+   <!--<div class="panel-group" id="accordion">-->
+
+      <!--<div class="panel panel-default" id="panel1">-->
+         <!--<div class="panel-heading">-->
+            <!--<h4 class="panel-title">-->
+               <!--<a data-toggle="collapse" data-target="#collapseOne"-->
+                  <!--href="#collapseOne">-->
+               <!--Facebook-->
+               <!--</a>-->
+            <!--</h4>-->
+         <!--</div>-->
+         <!--<div id="collapseOne" class="panel-collapse collapse in">-->
+            <!--<div class="panel-body">-->
+            <!--{{fb_form|bootstrap_horizontal}}-->
+            <!--</div>-->
+         <!--</div>-->
+      <!--</div>-->
+      <!--<div class="panel panel-default" id="panel2">-->
+         <!--<div class="panel-heading">-->
+            <!--<h4 class="panel-title">-->
+               <!--<a data-toggle="collapse" data-target="#collapseTwo"-->
+                  <!--href="#collapseTwo" class="collapsed">-->
+               <!--Twitter-->
+               <!--</a>-->
+            <!--</h4>-->
+         <!--</div>-->
+         <!--<div id="collapseTwo" class="panel-collapse collapse">-->
+            <!--<div class="panel-body">-->
+               <!--<div class="panel-body">-->
+             <!--{{twitter_form|bootstrap_horizontal}}-->
+               <!--</div>-->
+            <!--</div>-->
+         <!--</div>-->
+      <!--</div>-->
+      <!--<div class="panel panel-default" id="panel3">-->
+         <!--<div class="panel-heading">-->
+            <!--<h4 class="panel-title">-->
+               <!--<a data-toggle="collapse" data-target="#collapseThree"-->
+                  <!--href="#collapseThree" class="collapsed">-->
+               <!--Google-->
+               <!--</a>-->
+            <!--</h4>-->
+         <!--</div>-->
+         <!--<div id="collapseThree" class="panel-collapse collapse">-->
+            <!--<div class="panel-body">-->
+               <!--<div class="panel-body">-->
+             <!--{{google_form|bootstrap_horizontal}}-->
+               <!--</div>-->
+            <!--</div>-->
+         <!--</div>-->
+      <!--</div>-->
+      <!--<div class="panel panel-default" id="panel4">-->
+         <!--<div class="panel-heading">-->
+            <!--<h4 class="panel-title">-->
+               <!--<a data-toggle="collapse" data-target="#collapseFour"-->
+                  <!--href="#collapseFour" class="collapsed">-->
+               <!--LinkedIn-->
+               <!--</a>-->
+            <!--</h4>-->
+         <!--</div>-->
+         <!--<div id="collapseFour" class="panel-collapse collapse">-->
+            <!--<div class="panel-body">-->
+               <!--<div class="panel-body">-->
+             <!--{{linkedin_form|bootstrap_horizontal}}-->
+               <!--</div>-->
+            <!--</div>-->
+         <!--</div>-->
+      <!--</div>-->
+   <!--</div>-->
+<!--<br>-->
+
+<!--</form>-->
+
+        <!--<script src="{% static 'jquery-jtemplates.js' %}"></script>-->
+	<!--<script src="{% static 'form2js/form2js.js' %}"></script>-->
+    <!--<script type="text/javascript">-->
+
+
+	<!--function save_Socialappform(){-->
+		<!--var data = form2js("Socialappform");-->
+        <!--cartoview2.utils.submit_rest_form({-->
+    		<!--method:'PATCH',-->
+    		<!--form_id:"Socialappform",-->
+    		<!--url: "{% url 'cartoview2_base_url' %}rest/core/socialapp",-->
+    	<!--});-->
+	<!--}-->
+
+	<!--$('#Socialappform').submit(function(e){-->
+	<!--$.ajax({-->
+        <!--type: "POST",-->
+        <!--url: "{% url 'save_social_settings' %}",-->
+        <!--data: $(this).serialize(),-->
+        <!--dataType: "json",-->
+        <!--success: function(response) {-->
+        <!--},-->
+        <!--error: function(rs, e) {-->
+
+        <!--}-->
+    <!--});-->
+
+
+    <!--//$.post("{% url 'save_social_settings' %}", $(this).serialize(), function(data){});-->
+    <!--save_Socialappform()-->
+    <!--e.preventDefault();-->
+<!--});-->
+<!--</script>-->
+<!--</div> -->
+<div id="ct-apps" class="card" >
+	<a href="http://cartologic.com/cartoview/documentation/getting-started/" target="_blank" id="btn-apps-help" type="button" class="btn btn-info pull-right" title="Help" style="margin-left: 5px;"><span class="glyphicon glyphicon-info-sign"></span></a>
+    <a href="http://www.cartologic.com/cartoview/apps/" type="button" class="btn btn-success pull-right" >Download Apps</a>
+    <div id="ct-install-result"></div>
+    <button id="btn-show-install" type="button" class="btn btn-primary">Install New App</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sortingModal">
+      Edit App launcher
+    </button>
+    <!--&nbsp;&nbsp;<button class="btn btn-primary" data-toggle="modal" data-target="#sortingModal">Sort Apps for side menu  <span class="glyphicon glyphicon-sort"></span></button>-->
+      <div id="ct-install" class="panel panel-primary" style="display:none; margin: 10px 0;">
+         <div class="panel-heading">Install New App</div>
+          <div class="panel-body" style="padding-left:10px;">
+             <form  id="form-install-app" enctype="multipart/form-data" role="form">
+              {% csrf_token %}
+              <div class="form-group">
+                <label class="control-label " for="file-app">Package File</label>
+                <div class="">
+                    <input id="file-app" name="package_file" type="file">
+                </div>
+              </div>
+            </form>
+            
+            <button id="btn-install-app" type="button" class="btn btn-primary">Install</button>
+            <button id="btn-hide-install" type="button" class="btn btn-danger">Cancel</button>
+            
+          </div>
+      </div>
+    <table class="table table-striped table-bordered sortable" style="margin-top:20px;">
+        <thead>
+            <tr>
+                <th data-defaultsort="asc">Name</th>
+                <!--<th>Author</th>-->
+                <!--<th>License</th>-->
+                <th >Settings</th>
+                <th data-defaultsort='disabled'></th>
+                <th data-defaultsort='disabled'></th>
+            </tr>
+        </thead>
+        <tbody id="table-apps">
+        <!---------------------------Catalog row---------------------------------------->
+        <tr id="app_catalog_row">
+                <td>Catalog</td>
+                <!--<td>-->
+
+                    <!--<a href="http://cartologic.com/" target="_blank">Cartologic</a>-->
+
+                <!--</td>-->
+                <!--<td><a href="{% static 'catalog/license.txt'%}" target="_blank">BSD License</a></td>-->
+                <td>
+
+                   <a title="App Settings" href="{% url 'catalog_settings' %}">Settings</i></a>
+
+                </td>
+                <td>
+                </td>
+                <!--<td><a class="up glyphicon glyphicon-arrow-up" ata-app_id="{{app.id}}">-->
+
+                        <!--</a><a class="down glyphicon glyphicon-arrow-down" data-app_id="{{app.id}}">-->
+
+                        <!--</a>-->
+                <!--</td>-->
+                <td>
+
+                </td>
+            </tr>
+        <!------------------------------------------------------------------->
+            {% for app in Apps %}
+            <tr id="app_{{app.id}}_row">
+                <td>{{app.title}}</td>
+                <!--<td>-->
+                  <!--{% if app.author_website %}-->
+                    <!--<a href="{{app.author_website}}" target="_blank">{{app.author}}</a>-->
+                  <!--{% else %}-->
+                    <!--{{app.author}}-->
+                  <!--{% endif %}-->
+                <!--</td>-->
+                <!--<td><a href="{{ STATIC_URL }}{{app.name}}/license.txt" target="_blank">{{app.license}}</a></td>-->
+                <td>
+                   {% if app.settings_url %}
+                   <a title="App Settings" href="{{app.settings_url}}">Settings</i></a>
+                    {% endif %}
+                </td>
+                <td>
+                     <a  href="{% url 'cartoview2_uninstall_app_url' app.name %}" type="button" class="btn btn-danger btn-uninstall-app">Uninstall</a>
+                </td>
+                <!--<td><a class="up glyphicon glyphicon-arrow-up" data-app_id="{{app.id}}">-->
+
+                        <!--</a><a class="down glyphicon glyphicon-arrow-down" data-app_id="{{app.id}}">-->
+
+                        <!--</a>-->
+                <!--</td>-->
+                <td>
+                   {% if app.is_suspended %}
+                <a class="app_state resume btn btn-info" type="button" data-app_id="{{app.id}}">
+                        Resume
+                        </a>
+                    {% else %}
+                <a class="app_state suspend btn btn-warning" type="button" data-app_id="{{app.id}}">
+                        Suspend
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p style="display:none"><textarea id="app-row-template" rows="0" cols="0"><!--
+      
+        <td>{$T.title}</td>
+        <td>
+          {#if $T.author_website}
+            <a href="{$T.author_website}" target="_blanck">{$T.author}</a>
+          {#else}
+            {$T.author}
+          {#/if}
+        </td>
+        <td><a href="{{ STATIC_URL }}{$T.name}/licence.txt" target="_blanck">{$T.licence}</a></td>
+        <td>  
+          <a  href="{% url 'cartoview2_uninstall_app_url' 'APP_NAME' %}" type="button" class="btn btn-danger btn-uninstall-app">Uninstall</a>
+        </td>
+      
+  --></textarea></p>
+   <!---------------------------Sorting Modal ------------------------------- -->
+
+   <div class="modal fade" id="sortingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="sortingModalLabel">Organize Cartoview Apps</h4>
+         </div>
+         <div class="modal-body">
+
+                 <div class="row alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <strong>Hint: </strong> Drag and drop Apps between the lists , the right side list represents apps that are installed on <strong>Cartoview</strong> but will not appear in the left side menu , the other list will appear on the menu with its order.
+
+
+                </div>
+                 <div class=" row">
+
+
+                <div  class="col-md-6 col-sm-6 col-xs-6 layer block" >
+			    <div class="layer title">Menu Apps</div>
+			        <ul id="menu_apps" class="block__list block__list_words">
+                {% for app in menu_apps %}
+                     <li data-id="{{app.id}}" data-name="{{app.name}}"><strong>{{app.title}}</strong></li>
+                     {%  endfor %}
+			     </ul>
+		        </div>
+
+
+              <div class="col-md-6 col-sm-6 col-xs-6 layer block" >
+			<div class="layer title">Background Apps</div>
+			<ul id="non_menu_apps" class="block__list block__list_tags">
+				{% for app in non_menu_apps %}
+                     <li  data-id="{{app.id}}" data-name="{{app.name}}"><strong>{{app.title}}</strong></li>
+                     {% endfor %}
+			</ul>
+		</div>
+            </div>
+         </div>
+         <div class="modal-footer">
+             <div id = "load" class="form-group">
+        <img alt = "Saving...." src= "{% static 'loading.gif' %}" class = "pull-right" style="display: none;" id="loading_image">
+        <a class="btn btn-info" type="button" id = "order">Save Changes </a>
+    </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+    <!--------------------------------end Sorting Modal-------------------------------->
+</div>
+   <!--------------------------------------------------------------------------------------------->
+ <!--<div id="ct-sidemenu" class="card">-->
+                         <!--<div class="row alert alert-info alert-dismissible" role="alert">-->
+
+  <!--<strong>Hint: </strong> Drag and drop Apps between the lists , the right side list represents apps that are installed on <strong>Cartoview</strong> but will not appear in the left side menu , the other list will appear on the menu and App launcher with its order.-->
+
+
+             <!--</div>-->
+
+<!--<div class="container row">-->
+
+
+                <!--<div  class="col-md-4 col-sm-4 layer block" >-->
+			<!--<div class="layer title">Menu Apps</div>-->
+			<!--<ul id="menu_apps" class="block__list block__list_words">-->
+                <!--{% for app in menu_apps %}-->
+                     <!--<li data-id="{{app.id}}" data-name="{{app.name}}"><strong>{{app.title}}</strong></li>-->
+                     <!--{%  endfor %}-->
+			<!--</ul>-->
+		<!--</div>-->
+
+
+              <!--<div class="col-md-4 col-sm-4 layer block" >-->
+			<!--<div class="layer title">Background Apps</div>-->
+			<!--<ul id="non_menu_apps" class="block__list block__list_tags">-->
+				<!--{% for app in non_menu_apps %}-->
+                     <!--<li  data-id="{{app.id}}" data-name="{{app.name}}"><strong>{{app.title}}</strong></li>-->
+                     <!--{% endfor %}-->
+			<!--</ul>-->
+		<!--</div>-->
+            <!--</div>-->
+         <!--<br>-->
+     <!--<div id = "load" class="form-group pull-right">-->
+        <!--<img alt = "Saving...." src= "{% static 'loading.gif' %}" class = "pull-right" style="display: none;" id="loading_image">-->
+        <!--<a class="btn btn-primary" type="button" id = "order">Save Changes </a>-->
+    <!--</div>-->
+<!--</div>-->
+
+   <!--------------------------------------------------------------------------------------------->
+{% for app in apps %}
+<div id="ct-{{ app.name }}" class="card">
+
+    <script>
+       var {{app.name}}_rest_url = "{% url 'cartoview2_rest_url' %}" + "core/keyvaluegroup/";
+    </script>
+  {% include "cartoview2/tastypie_ajax_form.html" with form=app.config_form form_name=app.name method="PATCH" %}
+</div>
+{% endfor %}   
+{% endblock cards %}
+{% block other_content %}
+ <!-- Templates -->
+<p style="display:none">
+	<textarea id="app-instances-list-template" rows="0" cols="0"><!--
+
+	--></textarea>
+</p>     
+{% endblock other_content%}
+{% block more_scripts %}
+ <script src="{% static 'jquery-jtemplates.js' %}"></script>
+	<script src="{% static 'form2js/form2js.js' %}"></script>
+ <script type="text/javascript" src="{% static 'Sortable.js' %}"></script>
+	<script type="text/javascript">
+
+function save_site_form(){
+		var data = form2js("Homeform");
+        cartoview2.utils.submit_rest_form({
+    		method:'PATCH',
+    		form_id:"Homeform",
+    		url: window.site_rest_url ? window.site_rest_url : "{{rest_url}}",
+    	});
+    	$("#Homeform").submit();
+	}
+//====================================================
+      $(".up").click(function(e) {
+        var current = $('#app_'+$(e.target).data('app_id')+'_row');
+        var prev =  current.prev();
+         $.ajax({
+         url:'{% url 'cartoview2_base_url' %}apps/moveup/'+$(e.target).data('app_id'),
+         success:function(res){
+             prev.before(current);
+         }
+
+         });
+      });
+
+      $(".down").click(function(e) {
+        var current = $('#app_'+$(e.target).data('app_id')+'_row');
+        var next = current.next();
+        var currentId = current.attr('id');
+        $.ajax({
+         url:'{% url 'cartoview2_base_url' %}apps/movedown/'+$(e.target).data('app_id'),
+         success:function(res){
+            next.after(current);
+         }
+
+         });
+
+      });
+
+
+      $(".app_state").click(function(e) {
+        var current = $('#app_'+$(e.target).data('app_id')+'_row');
+        var state_button = $(this);
+        if (state_button.hasClass('suspend'))
+         {
+         $.ajax({
+         url:'{% url 'cartoview2_base_url' %}apps/suspend/'+$(e.target).data('app_id')+'/',
+         success:function(res){
+             state_button.addClass('resume').removeClass('suspend');
+             state_button.addClass('btn-info').removeClass('btn-warning');
+
+             state_button.text('Resume')
+         }
+
+         });
+         }
+         else if (state_button.hasClass('resume'))
+         {
+          $.ajax({
+         url:'{% url 'cartoview2_base_url' %}apps/resume/'+$(e.target).data('app_id')+'/',
+         success:function(res){
+             state_button.addClass('suspend').removeClass('resume');
+             state_button.addClass('btn-warning').removeClass('btn-info');
+             state_button.text('Suspend')
+         }
+
+         });
+         }
+      });
+//===================================================
+
+
+
+
+
+
+
+
+
+  var menu_apps = document.getElementById("menu_apps");
+
+var non_menu_apps = document.getElementById("non_menu_apps");
+
+new Sortable(menu_apps, {
+				group: "apps",
+			});
+
+
+new Sortable(non_menu_apps, {
+    group: "apps",	});
+var menu_apps = [];
+var non_menu_apps = [];
+
+
+ $("#order").click(function (e) {
+     $(this).css('display', 'none');
+            $('#loading_image').show();
+
+    $('#menu_apps').children().each(function() {
+      var $this = $(this);
+      var item = { id: $this.data('id'), name: $this.data('name') };
+
+      menu_apps.push(item);
+    });
+
+    $('#non_menu_apps').children().each(function() {
+      var $this = $(this);
+      var item = { id: $this.data('id'), name: $this.data('name') };
+
+      non_menu_apps.push(item);
+    });
+    var apps = {menu_apps : menu_apps , non_menu_apps:non_menu_apps}
+    apps_json = JSON.stringify (apps);
+    $.ajax({
+            type: "POST",
+            url: "{% url 'save_app_orders' %}",
+            data: {'apps':apps_json  ,  'csrfmiddlewaretoken':'{{csrf_token}}' },
+            dataType: "json",
+            success: function(response) {location.reload();},
+            error: function(rs, e) {
+
+            }
+        });
+
+  });
+		{% include 'cartoview2/settings.js' %}
+	</script>
+	<script src="{% static 'bootstrap-sortable/js/bootstrap-sortable.js' %}"></script>
+	<!-- Include this file if the table has a column date -->
+	<!-- <script src="{% static 'bootstrap-sortable/js/moment.min.js' %}"></script> -->
+{% endblock more_scripts %}

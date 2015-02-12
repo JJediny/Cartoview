@@ -1,0 +1,42 @@
+<div class="styler line-styler" styler-id="{{prefix}}">
+<label>Style Type: </label>
+<select class="form-control" name="type" style="width:150px;">
+  <option value="#{{prefix}}-single-line-ct" {{#is_single}}selected{{/is_single}}>Single Style</option>
+  <option value="#{{prefix}}-field-line-ct" {{#is_field}}selected{{/is_field}}>Attribute Value</option>
+  <option value="#{{prefix}}-user-line-ct" {{#is_user_def}}selected{{/is_user_def}}>User Defined</option>
+</select>
+
+<!-- Tab panes -->
+<div class="tab-content" style="padding-top:10px">
+  <div class="tab-pane {{#is_single}}active{{/is_single}}" id="{{prefix}}-single-line-ct" style-type="single">
+  	<div class="form-group">
+		<label>Strock Color</label>
+		<input type="text" class="form-control" name="color">
+	</div>
+  <div class="form-group">
+    <label>Strock Opacity</label>
+    <input type="number" class="form-control" name="opacity" min="0" max="1" step="0.10" style="width:150px">
+  </div>
+  <div class="form-group">
+    <label>Strock Width</label>
+    <input type="number" class="form-control" name="weight" min="1" max="10" step="1" style="width:150px">
+  </div>
+  <div class="form-group">
+    <label>Strock Style</label>
+    <div class="svg-dasharray">
+      {{#dasharrays}}
+      <div class="svg-line-ct" dasharray="{{.}}">
+        <svg version="1.1" width="216" height="20">
+          <line x1="10" y1="10" x2="200" y2="10" stroke-width="2" stroke="black" stroke-dasharray="{{.}}"></line>
+        </svg>
+        <a href="#"></a>
+      </div>
+      {{/dasharrays}}
+    </div>
+  </div>  
+  </div>
+  <div class="tab-pane  {{#is_field}}active{{/is_field}}" id="{{prefix}}-field-line-ct" style-type="field">Comming Soon</div>
+  <div class="tab-pane  {{#is_user_def}}active{{/is_user_def}}" id="{{prefix}}-user-line-ct" style-type="user">Comming Soon</div>
+  
+</div>
+</div>

@@ -1,0 +1,72 @@
+{% extends "cartoview2/base.html" %}
+{% load staticfiles %}
+{% block page_title %}{{site_settings_title}}{% endblock page_title %}
+{% block title %}{{site_settings_title}}{% endblock %}
+{% block styles %}
+<link href="{% static 'cartoview2/css/home.css' %}" rel="stylesheet" media="screen">
+{% endblock styles %}
+{% block content %}
+{% if user.is_superuser %}
+<div class="row" style="padding:15px;">
+	<div class="btn-group">
+	  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+	    Add New <span class="caret"></span>
+	  </button>
+	  <ul id="apps-dd-list" class="dropdown-menu" role="menu">
+        {% for app in CARTOVIEW_APPS %}
+          <li><a href="{% url 'cartoview2_base_url' %}{{app.name}}/new/">{{app.title}}</a></li>
+        {% endfor %}
+	  </ul>
+	</div>
+</div>
+{% endif %}
+<div id="ct-app-instances-list" class="row"></div>
+
+ <!-- Templates -->
+<p style="display:none">
+	<textarea id="app-instances-list-template" rows="0" cols="0"><!--
+	{#foreach $T.objects as instance}
+	<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" >
+	    <div class="panel panel-default" >
+	        <div class="panel-image">
+	            <img src="{$T.instance.thumbnail}" class="panel-image-preview" />
+	            <label for="toggle-{$T.instance$index}"></label>
+	        </div>
+	        <div class="panel-body">
+	        	<a href="{$T.instance.app.name}/view/{$T.instance.id}/">
+		            <h4>{$T.instance.title}</h4>
+		            <p>{$T.instance.description}</p>
+	            </a>
+	        </div>
+	        <div class="panel-footer">
+	        	<a class="link-view" href="{$T.instance.app.name}/view/{$T.instance.id}/" title="View">{$T.instance.title}</a>
+	        	{#if $T.instance.can_edit}
+	            <a href="{$T.instance.id}" class="delete-instance pull-right" title="edit"><span class="glyphicon glyphicon-minus-sign"></span></a>
+	            <a href="{$T.instance.app.name}/edit/{$T.instance.id}/" class="pull-right" title="edit"><span class="glyphicon glyphicon-edit"></span></a>
+	            {#/if}
+	        </div>
+	    </div>
+	</div>
+	{#/for}
+	<ul class="pager col-xs-12">
+	  <li class="previous {#if $T.meta.previous == null}disabled{#/if}"><a id="btn-previous" href="{$T.meta.previous}">&larr; Previous</a></li>
+	  <li class="next {#if $T.meta.next == null}disabled{#/if}"><a id="btn-next" href="{$T.meta.next}">Next &rarr;</a></li>
+	</ul>
+	--></textarea>
+	<textarea id="apps-dd-template" rows="0" cols="0"><!--
+		{#foreach $T.objects as app}
+		<li><a href="{$T.app.name}/new">{$T.app.title}</a></li>
+		{#/for}
+	--></textarea>
+</p>
+	
+              
+
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+	var ITEMS_PER_PAGE = {{home_page_items_per_page}};
+</script>
+<script src="{% static 'jquery-jtemplates.js' %}"></script>
+<script src="{% static 'home.js' %}"></script>
+{% endblock scripts %}

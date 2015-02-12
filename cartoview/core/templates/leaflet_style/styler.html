@@ -1,0 +1,10 @@
+{% if feature_type %}
+    {{ feature_type }}
+{% else %}
+    <select>
+        <option>Point</option>
+        <option>Line</option>
+        <option>Polygon</option>
+    </select>
+{% endif %}
+<h1>Styler for {{field_id}}</h1>

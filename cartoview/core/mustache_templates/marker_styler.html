@@ -1,0 +1,25 @@
+<div class="point-styler" style-feature-type="point">
+	<label>Style Type: </label>
+	<ul class="nav nav-pills" role="tablist">
+	  <li class="{{#is_single}}active{{/is_single}}"><a href="#{{prefix}}-single-point-ct" role="tab" data-toggle="tab">Single Style</a></li>
+	  <li class="{{#is_field}}active{{/is_field}}"><a href="#{{prefix}}-field-point-ct" role="tab" data-toggle="tab">Attribute Value</a></li>
+	  <li class="{{#is_user_def}}active{{/is_user_def}}"><a href="#{{prefix}}-user-point-ct" role="tab" data-toggle="tab">User Defined</a></li>
+	</ul>
+
+	<!-- Tab panes -->
+	<div class="tab-content" style="padding-top:10px" >
+	  <div class="tab-pane {{#is_single}}active{{/is_single}}" id="{{prefix}}-single-point-ct"  style-type="single">
+	  	<div class="form-group">
+			<label>point</label>
+			<input type="text" class="form-control" name="style" >
+		</div>
+		<div class="form-group">
+			<label>Focus point</label>
+			<input type="text" class="form-control" name="focus_style">
+		</div>
+	  </div>
+	  <div class="tab-pane {{#is_field}}active{{/is_field}}" id="{{prefix}}-field-point-ct"  style-type="field">Comming Soon</div>
+	  <div class="tab-pane {{#is_user_def}}active{{/is_user_def}}" id="{{prefix}}-user-point-ct"  style-type="user_def">Comming Soon</div>
+	  
+	</div>
+</div>

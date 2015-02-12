@@ -1,0 +1,83 @@
+{% extends "cartoview2/base.html" %}
+{% load staticfiles %}
+{% block title %}Cartoview2 Home{% endblock %}
+{% block styles %}
+<link href="{% static 'cartoview2/css/home.css' %}" rel="stylesheet" media="screen">
+<style type="text/css">
+#ct-apps-list a{
+	margin-bottom: 10px;
+	text-align: center;
+	display: inline-block;
+	margin-bottom: 30px;
+	color: #555;
+}
+#ct-apps-list span.app-title
+{
+	/*text-align: center;
+	display: block;
+	width: 100%;*/
+	
+}
+@media screen and (max-width: 768px) {
+    #ct-apps-list a {
+        font-size:0.9px;
+    }
+}
+
+@media screen and (max-width: 568px) {
+    #ct-apps-list a {
+        font-size:0.7em;
+    }
+}
+#ct-apps-list img.thumbnail{
+	border: none;
+	margin-bottom: 10px;
+}
+</style>
+{% endblock styles %}
+{% block content %}
+
+
+<div class="row" style="padding:0px 15px 15px 0px;">
+	
+</div>
+<div class="row">
+	<div class="col-md-1"></div>
+	<div id="ct-apps-list" class="col-md-10"></div>
+	<divclass="col-md-1"></div>
+</div>
+
+ <!-- Templates -->
+<p style="display:none">
+	<textarea id="apps-list-template" rows="0" cols="0"><!--
+	{#foreach $T.objects as app}
+    <div class="col-md-2 col-sm-3 col-xs-4">
+    	<a title="{$T.app.title}" href="{$T.app.name}/" class="" >
+	    	<img class="thumbnail img-responsive" src="{% static '' %}{$T.app.name}/icon.png" />
+	    	<span class="app-title">{$T.app.title}</span>
+    	</a>
+    </div>
+	{#/for}
+	
+	--></textarea>
+	<textarea id="apps-dd-template" rows="0" cols="0"><!--
+		{#foreach $T.objects as app}
+		<li><a href="{$T.app.name}/new">{$T.app.title}</a></li>
+		{#/for}
+		<ul class="pager col-xs-12">
+		  <li class="previous {#if $T.meta.previous == null}disabled{#/if}"><a id="btn-previous" href="{$T.meta.previous}">&larr; Previous</a></li>
+		  <li class="next {#if $T.meta.next == null}disabled{#/if}"><a id="btn-next" href="{$T.meta.next}">Next &rarr;</a></li>
+		</ul>
+	--></textarea>
+</p>
+	
+              
+
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+	var ITEMS_PER_PAGE = {{home_page_items_per_page}};
+</script>
+<script src="{% static 'jquery-jtemplates.js' %}"></script>
+<script src="{% static 'cartoview2/home.js' %}"></script>
+{% endblock scripts %}

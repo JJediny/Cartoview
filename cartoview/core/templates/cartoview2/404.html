@@ -1,0 +1,33 @@
+{% extends "cartoview2/base.html" %}
+{% load bootstrap %}
+{% load staticfiles %}
+{% block page_title %}{{site_settings_title}}404 Page Not Found{% endblock page_title %}
+
+{% block styles %}
+<link href="{% static '404/css/style.css' %}" rel="stylesheet">
+{% endblock styles %}
+{% block scripts %}
+<link href="{% static '404/js/form.js' %}" rel="stylesheet">
+{% endblock scripts %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="error-template">
+                <h1 class="heading1">
+                    Oops!</h1>
+                <h2 class="heading2">
+                    404 Not Found</h2>
+                <div class="error-details">
+                    Sorry, an error has occured, Requested page not found!
+                </div>
+                <div class="error-actions">
+                    <a href="{% url 'cartoview2_base_url' %}" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-home class=btn-txt1"></span><span class="btn-txt1"><strong>Take Me Home</strong></span></a>
+                    <!-- <a href="{% url 'contact_us' %}" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-envelope btn-txt2"></span><span class="btn-txt1"><strong>Contact Support</strong></span></a> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+{% endblock content %}

@@ -1,0 +1,19 @@
+{% load bootstrap %}
+<form id="form-{{form_name}}" class="form-horizontal" role="form">
+    {{ form|bootstrap_horizontal }}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <input type="button" class="btn btn-primary" value="{{ save_btn_txt|default:'Save' }}" onclick="save_{{form_name}}_form()"/>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+	function save_{{form_name}}_form(){
+		var data = form2js("form-{{form_name}}");
+        cartoview2.utils.submit_rest_form({
+    		method:'{{method|default:"POST"}}',
+    		form_id:"form-{{form_name}}",
+    		url: window.{{form_name}}_rest_url ? window.{{form_name}}_rest_url : "{{rest_url}}",
+    	});
+	}
+</script>

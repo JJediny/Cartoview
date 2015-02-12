@@ -1,0 +1,18 @@
+<div class="leaflet-styler">
+  <label>Feature Type: </label>
+  
+  <select class="form-control" name="featureType" style="width:150px">
+    <option value="#{{prefix}}-point-styler-ct" {{#is_point}}selected{{/is_point}}>Point</option>
+    <option value="#{{prefix}}-line-styler-ct" {{#is_line}}selected{{/is_line}}>Line</option>
+    <option value="#{{prefix}}-polygon-styler-ct" {{#is_polygon}}selected{{/is_polygon}}>Polygon</option>
+  </select>
+  <!-- Tab panes -->
+  <div class="tab-content" style="padding-top:10px">
+    <div class="tab-pane styler-tab {{#is_point}}active{{/is_point}}" id="{{prefix}}-point-styler-ct">
+    </div>
+    <div class="tab-pane styler-tab {{#is_line}}active{{/is_line}}" id="{{prefix}}-line-styler-ct">
+    </div>
+    <div class="tab-pane styler-tab {{#is_polygon}}active{{/is_polygon}}" id="{{prefix}}-polygon-styler-ct">
+    </div>
+  </div>
+</div>

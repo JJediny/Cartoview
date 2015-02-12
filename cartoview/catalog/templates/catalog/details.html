@@ -1,0 +1,488 @@
+{% extends "catalog/template-submit.html" %}
+{% load i18n  %}
+
+    {% load thumbnail filters staticfiles%}
+    {% load comments guardian_tags  %}
+
+    {% block meta %}
+    <meta name="Keywords" content="{{resource.tags.all|join:', '}}" />
+    <meta name="Description" content="{{resource.short_description}}" />
+    <link rel="canonical" href="http://www.opendataphilly.org{{SITE_ROOT}}{{resource.get_absolute_url}}" />
+
+
+
+    {% endblock %}
+    {% block styles%}
+    <style>
+        .social > iframe { display: inline-block; position: relative; top: 4px; }
+        #permission_form .select2-container{width:250px}
+        .select2-container-multi .select2-choices .select2-search-field input{height:auto;margin-left:10px}
+
+    </style>
+   <link rel="stylesheet" href="{% static 'catalog/select2/select2.css'%}" type="text/css"/>
+
+    {% endblock %}
+    {% block title %} - {{resource}}{% endblock %}
+
+    {% block js_ready %}
+    <div id="fb-root"></div>
+    <script>
+    //===================== FB share =========================================
+    window.fbAsyncInit = function() {
+        FB.init({appId: '476341589162353', status: true, cookie: true,
+            xfbml: true});
+    };
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+    <script>
+    //================Twitter share =========================================
+    /*!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");*/
+    //======================================================================
+    </script>
+
+    <script>
+        $(document).ready(function () {
+			$('.twitter-share-button').attr('data-url',window.location.href);
+            odp.getTags();
+            odp.getCategories();
+			//odp.getApps();
+			odp.setupSearchInput();
+
+			odp.setupCommentForm();
+			//odp.makeTabs('#content_resource, #content_data, #content_ratings');
+			odp.makeDialog('.tab_image');
+			//odp.makeTabs('.tab_container');
+        });
+        function confirm (resourceId){
+            $('<div></div>').appendTo('body')
+            .html('<div><h6>Are you sure?</h6></div>')
+            .dialog({
+                modal: true,
+                title: 'Delete Item',
+                zIndex: 10000,
+                autoOpen: true,
+                width: 'auto',
+                resizable: false,
+                buttons: {
+                    Yes: function () {
+                    // $(obj).removeAttr('onclick');
+                    // $(obj).parents('.Parent').remove();
+
+                    window.location = '{% url 'catalog_base_url' %}resource/delete/'+resourceId
+
+                    $(this).dialog("close");
+                },
+                No: function () {
+                    $(this).dialog("close");
+                }
+            },
+            close: function (event, ui) {
+                $(this).remove();
+            }
+        });
+        }
+
+    </script>
+    <script type="text/javascript" src="{% static 'catalog/select2/select2.js'%}"></script>\
+            {% if request.user.is_superuser or request.user == resource.created_by %}
+    {% include "catalog/_permissions_form_js.html" %}
+            {% endif  %}
+    {% endblock %}
+
+    {% block center_container %}
+        <h1 id="title">{% firstof resource.data_types.all.0.data_type resource.url_set.all.0.service_type.service_type resource.data resource.app.title %} - {{resource}} </h1>
+
+        <div class="tab_container" id="content_resource">
+            <!--{% if perms.opendata.change_resource %}-->
+            <!--<div id="admin_link"><a href="{{SITE_ROOT}}/_admin_/opendata/resource/{{resource.id}}" target="_blank">Edit</a></div>-->
+            <!--{% endif %}-->
+            <div class="">
+                <div class="tab-pane active" id="tab_basic_info">
+                    <div id='basic-area' class="row">
+
+                        <div class="col-md-4 col-xs-14" id="tab_image_container">
+                            {% if resource.get_images %}
+
+                            {% thumbnail resource.get_last_image.image  "800" upscale=True   as im %}
+                                <img class = "img-thumbnail" src="{{ im.url }}" alt="{{i.title}}">
+                            {% endthumbnail %}
+
+
+
+                            {% elif resource.url_set.all.0.service_type.image %}
+                            {% thumbnail resource.url_set.all.0.service_type.image  "300"  upscale=True format="PNG" as im %}
+                              <img class = "img-thumbnail" src="{{ im.url }}">
+                            {% endthumbnail %}
+
+
+                            {%elif resource.app.app_img%}
+                            {% thumbnail resource.app.app_img   "300"  upscale=True format="PNG"   as im  %}
+                              <img class = "img-thumbnail" src="{{ im.url }}">
+                            {% endthumbnail %}
+                            {% else %}
+                            <div class="tab_image" id="tab_image_1">
+                                <img src="{%  static 'catalog/images/results_no_image.jpg' %}" alt="No Resource Images">
+                            </div>
+                            {% endif %}
+                                <div class = "pull-left">
+                                     {% get_obj_perms request.user for resource as "resource_perms" %}
+                                        {% if "change_resource" in resource_perms %}
+                                    <a class="btn btn-primary " href="{% url 'catalog_base_url' %}resource/edit/{{resource.id}}">Edit metadata</a>
+                                        {% endif %}
+                                      {% for url in resource.get_grouped_urls.Application %}
+                                                {% if url.url_label == 'Edit' %}
+                                                    {% get_obj_perms request.user for resource as "resource_perms" %}
+
+                                                    {% if "change_resource" in resource_perms %}
+                                                   <a class="btn btn-primary " href="{{url.url}}">Config</a>
+                                                    {% endif %}
+                                                {% else %}
+
+                                                   <a class="btn btn-primary " href="{{url.url}}">{{url.url_label}}</a>
+                                                {% endif %}
+                                          {% endfor %}
+
+                              {% if resource.app.name in perms %}
+                                    {% if resource.app.name|can_delete in perms %}
+                                    <a class="btn  btn-danger" href="javascript:void()" onClick="confirm({{r.id}});return false;">Delete</a>
+                                    {% endif %}
+
+
+                                                {% elif resource.get_grouped_urls.API or resource.get_grouped_urls.Data or resource.get_grouped_urls.Link   %}
+                                                {% if perms.catalog.delete_resource %}
+                                           <a class="btn btn-danger" href="javascript:void()" onClick="confirm({{resource.id}});return false;">Delete</a>
+                                                {% endif %}
+                                            {% endif %}
+                                </div>
+                            <div class=" hidden-md hidden-lg">
+                               <br><br>
+                             </div>
+                        </div>
+
+                         <div class="col-md-8 col-xs-12">
+                             {% if request.user.is_superuser or request.user == resource.created_by %}
+
+
+                                        <a href="#modal_perms" data-toggle="modal"  data-target="#_permissions" class="pull-right btn  btn-primary"><i class="fa fa-key"></i> Edit permissions</a>
+                                        {% include "catalog/_permissions_form.html" %}
+                        {% endif %}
+                            <div class="">{{resource.short_description|safe}}</div>
+                            <div class="">{% firstof resource.data_types.all.0.data_type resource.url_set.all.0.service_type.service_type resource.data resource.app.title %}
+                            by <b><a href = '{% url "user_resources" resource.created_by.id %}'>{{resource.created_by.username}}</a></b></div>
+                            <div class="">Last modified: {{resource.last_updated}}</div>
+                            <div id="detail_rating">
+                                <input name="star_resource" type="radio" class="star star_resource" disabled="disabled"/>
+                                <input name="star_resource" type="radio" class="star star_resource" disabled="disabled"/>
+                                <input name="star_resource" type="radio" class="star star_resource" disabled="disabled"/>
+                                <input name="star_resource" type="radio" class="star star_resource" disabled="disabled"/>
+                                <input name="star_resource" type="radio" class="star star_resource" disabled="disabled"/>
+                                <script type="text/javascript">
+                                    var rating_test = {{resource.rating.score|default:"0"}};
+                                    if (rating_test != 0) {
+                                        var rating = rating_test/{{resource.rating.votes}};
+                                        rating = Math.floor(rating);
+                                        $("input:radio.star_resource")[rating-1].checked = 'checked';
+                                    }
+                                </script>
+                                <span class="">({{resource.rating.votes|default:"0"}} Votes)</span>
+                            </div>
+                            <div class = 'social'>
+								<div class="fb-share-button" data-href="{{SITE_ROOT}}/catalog/resource/{{resource.id}}" data-type="button_count"></div>
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
+                            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12 ">
+                            <h3>Description</h3>
+                            <div class="info_data">{{resource.description|safe}}</div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3>Properties</h3>
+                            <table width="100%">
+                                <tbody>
+                                    <tr>
+                                        <td>Tags</td>
+                                        <td>
+                                            {% for tag in resource.tags.all %}
+                                            <a href="{% url 'catalog_base_url' %}tag/{{tag.id}}" onclick="odp.trackEvent('Search Link', 'Resource Tag', 'Tag', '{{tag}}')">{{tag}}</a>{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    <tr></tr>
+                                        <td>Categories</td>
+                                        <td>
+                                            {% for category in resource.categories.all %}
+                                            <a href="{% url 'catalog_base_url' %}category/{{category.id}}" onclick="odp.trackEvent('Search Link', 'Resource Category', 'Category', '{{category}}')">{{category}}</a>{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    {% if resource.organization %}
+                                    <tr>
+                                        <td>Organization</td>
+                                        <td><a href="{% url 'catalog_base_url' %}/search/?qs={{resource.organization}}" onclick="odp.trackEvent('Search Link', 'Resource Organization', 'Resource', {{resource.id}})">{{resource.organization}}</a></td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if resource.division %}
+                                    <tr>
+                                        <td>Division</td><td><a href="{% url 'catalog_base_url' %}search/?qs={{resource.division}}" onclick="odp.trackEvent('Search Link', 'Resource Division', 'Resource', {{resource.id}})">{{resource.division}}</a></td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if resource.release_date %}
+                                    <tr>
+                                        <td>Release Date</td><td>{{resource.release_date}}</a></td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if resource.time_period %}
+                                    <tr>
+                                        <td>Valid Time Period</td><td>{{resource.time_period}}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if resource.data_types.all.count > 0 %}
+                                    <tr>
+                                        <td>Data Types</td>
+                                        <td>
+                                            {% for dt in resource.data_types.all %}
+                                            {{dt}}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    <tr>
+                                        <td>Usage</td><td>{{resource.usage}}</td>
+                                    </tr>
+                                    {% if resource.updates %}
+                                    <tr>
+                                        <td>Update Frequency</td><td>{{resource.updates}}</a></td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if resource.area_of_interest %}
+                                    <tr>
+                                        <td>Area of Interest</td><td>{{resource.area_of_interest}}</a></td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if resource.coord_sys.all.count > 0 %}
+                                    <tr>
+                                        <td>Coordinate Systems</td>
+                                        <td>
+                                            {% for cs in resource.coord_sys.all %}
+                                            {{cs}}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if resource.contact_phone %}
+                                    <div class="info_label">Contact Phone</div><div class="info_data">{{resource.contact_phone}}</a></div>
+                                    {% endif %}
+                                    {% if resource.contact_email %}
+                                    <div class="info_label">Contact Email</div><div class="info_data"><a href="mailto:{{resource.contact_email}}" target="_blank" onclick="odp.trackEvent('External Link', 'Resource Email', 'Email', '{{resource.contact_email}}')">{{resource.contact_email}}</a></div>
+                                    {% endif %}
+                                    {% if resource.contact_url %}
+                                    <div class="info_label">Contact Url</div><div class="info_data"><a href="{{resource.contact_url}}" target="_blank" onclick="odp.trackEvent('External Link', 'Resource Contact Url', 'Url', '{{resource.contact_url}}')">{{resource.contact_url}}</a></div>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <hr>
+                    <div id="tab_data">
+                    {% if resource.get_grouped_urls.Data %}
+                    <div class="data_block">
+                        <div class="url_header">
+                            <div id="resource_icon_Data" class="url_image"></div><div class="url_label">Raw Data</div>
+                        </div>
+                        <ul>
+                            {% for url in resource.get_grouped_urls.Data %}
+                            <li class="url_link pull-left"><a class="btn" href="{{url.url}}" target="_blank">{{url.url_label}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if resource.get_grouped_urls.Documentation %}
+                    <div class="data_block" id="data_documention">
+                        <div class="url_header">
+                            <div id="resource_icon_Documentation" class="url_image"></div><div class="url_label">Documentation</div>
+                        </div>
+                        <ul>
+                            {% for url in resource.get_grouped_urls.Documentation %}
+                            <li class="url_link"><a href="{{url.url}}" target="_blank">{{url.url_label}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if resource.get_grouped_urls.API %}
+                    <div class="data_block" id="data_api">
+                        <div class="url_header">
+                            <div id="resource_icon_API" class="url_image"></div><div class="url_label">APIs</div>
+                        </div>
+                        <ul>
+                            {% for url in resource.get_grouped_urls.API %}
+                            <li class="url_link"><a href="{{url.url}}" target="_blank">{{url.url}}</a></li>
+
+                        </ul>
+                        <br><br>
+                        <div><strong> Provider :  </strong>
+                            {{url.provider.provider}} &nbsp &nbsp
+
+                            <strong> Service type :  </strong>
+                            {{url.service_type.service_type}}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% if resource.get_grouped_urls.Application %}
+                        <div class="data_block" id="data_application">
+                            <div class="url_header">
+                                <div id="resource_icon_Application" class="url_image"></div><div class="url_label">Applications</div>
+                            </div>
+                            <ul>
+                                {% for url in resource.get_grouped_urls.Application %}
+                                {% if url.url_label == 'Edit' %}
+                                    {% get_obj_perms request.user for resource as "resource_perms" %}
+
+                                           {% if "change_resource" in resource_perms %}
+                                <li class="url_link"><a href="{{url.url}}" target="_blank">{{url.url_label}}</a></li>
+                                            {% endif %}
+
+                                {%else %}
+                                <li class="url_link"><a href="{{url.url}}" target="_blank">{{url.url_label}}</a></li>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if resource.get_grouped_urls.Map %}
+                        <div class="data_block" id="data_map">
+                            <div class="url_header">
+
+                            </div>
+                            <ul>
+                                {% for url in resource.get_grouped_urls.Map %}
+                                <li class="url_link"><a href="{{url.url}}" target="_blank">{{url.url_label}}</a></li>
+                                {% endfor %}
+                            </ul>
+
+                        </div>
+                        {% endif %}
+                        <div class="clear"></div>
+                    </div>
+                    <hr>
+                    <div id="new_comments">
+                        {% if settings.enable_rating %}
+                    <div class="tab-pane" id="tab_comment">
+                        <h3>Comments</h3>
+                        <div class="row" id="post-review-box" >
+                            {% if user.is_authenticated %}
+                            {% get_comment_form for resource as form %}
+                            <div class="col-md-12">
+                                <form id="resource_comment_form" action="{% comment_form_target %}" method="post">{% csrf_token %}
+                                    <div id="comment_field_errors"></div>
+                                    <input type="hidden" name="next" value="{{request.get_full_path}}" />
+                                    {% for field in form %}
+                                    {% if field.is_hidden %}
+                                    {{ field }}
+                                    {% else %}
+                                    {% ifnotequal field.name "rating" %}
+                                    {% if field.errors %}{{ field.errors }}{% endif %}
+                                    <div class="comment_field {% if field.errors %} error{% endif %}"
+                                    {% ifequal field.name "honeypot" %} style="display:none;"{% endifequal %}
+                                    {% ifequal field.name "url" %} style="display:none;"{% endifequal %}
+                                    {% ifequal field.name "name" %} style="display:none;"{% endifequal %}
+                                    {% ifequal field.name "email" %} style="display:none;"{% endifequal %}>
+                                    {{ field }}
+                                </div>                        {% else %}
+
+
+                                <div id="rate_container">
+                                    <div id="rate_label">Rate this data  </div><div id="rate">{{ field }}</div>
+                                </div>
+
+                                {% endifnotequal %}
+                                {% endif %}
+                                {% endfor %}
+                                <button class="btn btn-primary" type="submit">Publish Comment</button>
+
+
+                            </form>
+
+                        </div>
+                        {% else %}
+                        <div>Please <a href="{% url 'account_login' %}?next={{ request.get_full_path }}">login</a> to add comments</div>
+                        {% endif %}
+                    </div>
+                    <br> <br>
+                    <div id = "comments-list">
+                        <div class="panel panel-default widget">
+                            <div class="panel-heading">
+                                <span class="glyphicon glyphicon-comment"> </span>
+
+                            </div>
+                            <div class="panel-body">
+                                <ul class="list-group">
+
+                                    {% get_comment_list for resource as comment_list %}
+                                    {% for comment in comment_list %}
+
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-xs-2 col-md-1">
+                                                <img src="http://placehold.it/80" class="img-circle img-responsive" alt="" /></div>
+                                                <div class="col-xs-10 col-md-11">
+                                                    <div>
+                                                        <div class="mic-info">
+                                                            By: <a href="#">{{ comment.user.username }}</a> at: {{ comment.submit_date|date:"m/d/Y"}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="comment-text">
+                                                        {{ comment.comment }}
+                                                    </div>
+                                                    <div class="action">
+                                                        <div class="comment_rating">
+                                                            <input name="star_{{comment.id}}" type="radio" class="star star_{{comment.id}}" disabled="disabled"/>
+                                                            <input name="star_{{comment.id}}" type="radio" class="star star_{{comment.id}}" disabled="disabled"/>
+                                                            <input name="star_{{comment.id}}" type="radio" class="star star_{{comment.id}}" disabled="disabled"/>
+                                                            <input name="star_{{comment.id}}" type="radio" class="star star_{{comment.id}}" disabled="disabled"/>
+                                                            <input name="star_{{comment.id}}" type="radio" class="star star_{{comment.id}}" disabled="disabled"/>
+                                                            <script type="text/javascript">
+                                                                var rating = {{comment.rating|default:"0"}};
+                                                                if (rating != 0) {
+                                                                    $("input:radio.star_{{comment.id}}")[{{comment.rating}}-1].checked = 'checked';
+                                                                }
+                                                            </script>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+
+                                        {% empty %}
+                                        <div class="comment_item">No comments yet!</div>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear_left"></div>
+                    </div>
+
+                    {% endif %}
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                </div>
+        </div>
+
+    {% endblock %}

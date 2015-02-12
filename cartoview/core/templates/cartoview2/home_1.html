@@ -1,0 +1,270 @@
+{% load i18n %}
+{% load account thumbnail %}
+{% load staticfiles %}
+{% load url from future %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Cartoview - Home</title>
+
+    <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->
+    <!--<link href="{% static 'bootstrap/css/bootstrap.min.css' %}"  rel="stylesheet">-->
+    <link href="{% static 'home1/css/bootstrap.min.css' %}"  rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'home1/css/freelancer.css' %}"  rel="stylesheet">
+
+    <!-- Custom Fonts -->
+        <link rel="stylesheet" type="text/css" href="{% static 'home1/css/metro-bootstrap.min.css' %}">
+
+    <link href="{% static 'home1/font-awesome-4.1.0/css/font-awesome.min.css' %}"  rel="stylesheet" type="text/css">
+
+    <link href="{% static 'home1/css/Montserrat.css' %}"  rel="stylesheet" type="text/css">
+    <link href="{% static 'home1/css/lato.css' %}"  rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="{% static 'home1/js/html5shiv.js' %}"></script>
+        <script src="{% static 'home1/js/respond.min.js' %}"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top" class="index">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#page-top">{{site_settings_title}}</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#portfolio">Apps</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#about">About</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <img class="img-responsive" src="{% static 'home1/img/logo.png' %}" alt="">
+                    <div class="intro-text">
+                        <span class="name">{{site_settings_title}}</span>
+                        <hr class="star-light">
+                        <span class="skills">Web Spatial Platform</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Portfolio Grid Section -->
+    <section id="portfolio">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Apps</h2>
+                    <hr class="star-primary">
+                </div>
+            </div>
+            <div class="row">
+                <div class="grid">
+
+                     <div class="tile tile-carrot col-md-4 col-xs-12">
+          <div class="tile-content">
+               <a href="{% url 'catalog_base_url' %}">
+              <div class="tile-icon-small">
+                <img src="{% static 'home1/img/map-8.png' %}">
+                   <h1>catalog</h1>
+              </div>
+                   </a>
+            </div>
+
+          </div>
+                {% for app in CARTOVIEW_APPS %}
+                {% if app.in_menu %}
+                <!--<div class="col-sm-4 portfolio-item">-->
+                    <!--<a href="{% url 'catalog_base_url' %}search/?sort=name&dir=asc&app={{app.name}}" class="portfolio-link">-->
+                        <!--<div class="caption">-->
+                            <!--<div class="caption-content">-->
+                                <!--<i class=""><strong style="font-size:20px">{{app.title}}</strong></i>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                    <!--{% if app.app_logo %}-->
+                        <!--{% thumbnail app.app_logo  '200x200' as im %}-->
+                             <!--<img src="{{ im.url }}" width = '200' height = '200' class="img-responsive" alt="">-->
+                        <!--{% endthumbnail  %}-->
+                    <!--{% else %}-->
+                        <!--<img src="{% static 'home1/img/portfolio/catalog.png' %}"  width = '200' height = '200' class="img-responsive" alt="">-->
+                    <!--{% endif %}-->
+
+                    <!--</a>-->
+                <!--</div>-->
+
+
+          <div class="tile col-md-4 col-xs-12">
+            <a href="{% url 'catalog_base_url' %}search/?sort=name&dir=asc&app={{app.name}}">
+              <h1>{{app.title}}</h1>
+            </a>
+          </div>
+          <!--<div class="tile tile-emerald col-md-3 col-xs-12">-->
+          <!--</div>-->
+          <!--<div class="tile tile-turquoise col-md-3 col-xs-12"></div>-->
+          <!--<div class="tile tile-amethyst col-md-3 col-xs-12"></div>-->
+
+             {% endif %}
+                {% endfor %}
+                    </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="success" id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>About</h2>
+                    <hr class="star-light">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-lg-offset-2">
+                    <p>Cartoview is a suite of enterprise geospatial applications built on a common architecture using GIS web data services from ESRI and from OGC, The apps and architecture of CartoView make it easy to efficiently develop and maintain enterprise applications ,Installation is very simple, just download your geosapatial apps, install and configure on your server and you are ready to go.</p>
+                </div>
+                <div class="col-lg-4">
+                    <p>You want to build your own custom app no problem, the loosely coupled nature of the applications makes these components easy to understand, extend and customize ,CartoView is licensed under the Apache License Version 2.0 which grants you the right to customize, extend, modify, repackage, resell, and many other potential uses of the system.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Contact Us</h2>
+                    <hr class="star-primary">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <p>For further information or feedback about cartoview , please  <a href="http://cartoview.cartologic.com/contact_us/"><b>contact us</b></a></p>
+            </div>
+                </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="footer-above">
+            <div class="container">
+                <div class="row">
+                    <!--<div class="footer-col col-md-6">-->
+                        <!--<h3>Location</h3>-->
+                        <!--<p>Plot No. 83, block No. 3, 9th district ,Al Sheikh Zayed, 6th of October, GIZA - Egypt.</p>-->
+                    <!--</div>-->
+                    <!--<div class="footer-col col-md-4">-->
+                        <!--<h3>Around the Web</h3>-->
+                        <!--<ul class="list-inline">-->
+                            <!--<li>-->
+                                <!--<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-facebook"></i></a>-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-google-plus"></i></a>-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-twitter"></i></a>-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-linkedin"></i></a>-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-dribbble"></i></a>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                    <!--</div>-->
+                    <div class="footer-col col-sm-6 col-sm-offset-3">
+                        <h3>About Cartologic</h3>
+                        <p>We are a team of geospatial IT developers and designers who use advanced spatialy enabled enterprise application development methodologies to integrate GIS in your organization , for more visit <a href="http://cartologic.com">Cartologic</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        Copyright &copy; Cartologic 2014
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+    <div class="scroll-top page-scroll visible-xs visble-sm">
+        <a class="btn btn-primary" href="#page-top">
+            <i class="fa fa-chevron-up"></i>
+        </a>
+    </div>
+
+    <!-- jQuery Version 1.11.0 -->
+    <script src="{% static 'jquery-1.10.2.min.js' %}"></script>
+      <script src="{% static 'jquery-ui/js/jquery-ui-1.10.4.min.js' %}"></script>
+      <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+
+    <!-- Plugin JavaScript -->
+    <!--<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>-->
+    <script src="{% static 'home1/js/classie.js' %}" ></script>
+    <script src="{% static 'home1/js/cbpAnimatedHeader.js' %}"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="{% static 'home1/js/jqBootstrapValidation.js' %}"></script>
+    <!--<script src="js/contact_me.js"></script>-->
+
+    <!-- Custom Theme JavaScript -->
+    <script src="{% static 'home1/js/freelancer.js' %}"></script>
+
+
+</body>
+
+</html>

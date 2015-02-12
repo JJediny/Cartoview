@@ -1,0 +1,38 @@
+{% extends "catalog/base.html" %}
+
+{% block js_ready %}
+	<script>
+		$(document).ready(function () {
+			odp.getTags();
+			odp.getCategories();
+
+			//odp.getApps();
+			odp.setupSearchInput();
+		});
+	</script>
+{% endblock %}
+
+          {% block top-bar%}
+    {% include "catalog/searchbar.html" %}
+        {% endblock top-bar %}
+
+{% block content %}
+
+
+
+
+      <div id="center_container" class="home col-md-10 ">
+
+
+		<div id="center_content">
+			{% block center_container %}
+			{% endblock %}
+		</div>
+
+	</div>
+
+
+  {% include "catalog/footer.html" %}
+
+{% block extra_script %}{% endblock extra_script %}
+{% endblock %}

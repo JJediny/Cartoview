@@ -1,0 +1,97 @@
+<div class="modal fade" id="{{modal_id}}" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="Modal-title">{% if dialog_header %}{{dialog_header}}{% else %}Choose Url From:{% endif %}</h4>
+                {% if show_filter %}Filter Here{% endif %}
+            </div>
+            <div class="modal-body">
+            	<div id="{{modal_id}}-loading">Loading...</div>
+                <div id="{{modal_id}}-list" class="list-group">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id = 'btn-select-{{modal_id}}' class="btn btn-primary">Select service</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+var select_url_title = "";//TODO: Find a good way to populate this
+$(function(){
+    $("#{{modal_id}}").appendTo('body');//hack to force the show the model even if its container is hidden
+    var urls_data;
+    var data_loaded = false;
+    var relatedTarget; // the button that show the modal
+	$("#btn-select-{{modal_id}}").click(function(){
+        var selected = $('.active',"#{{modal_id}}-list")
+        if(selected.length == 0){
+            alert("Please select a leyer");
+            return;
+        }
+        var index = parseInt(selected.attr("data-index"));
+        var url_obj = urls_data[index];
+        select_url_title = url_obj.url_label;
+        $('#{{modal_id}}').modal('hide');
+
+        {% if url_field_id %}
+        $("#{{url_field_id}}").val(url_obj.url);
+        {% endif %}
+        {% if callback %}
+        {{callback}}(url_obj, relatedTarget {% if url_field_id %},$("#{{url_field_id}}"){% endif %});
+        {% endif %}
+    });
+    var params = {format:"json"};
+    {% if service_type %}
+    params.service_type__service_type = "{{service_type}}"
+    {% endif %}
+    {% if url_type %}
+    params.url_type__url_type = "{{url_type}}"
+    {% endif %}
+    {% if provider %}
+    params.provider__provider = "{{provider}}"
+    {% endif %}
+    
+    $('#{{modal_id}}').on('show.bs.modal', function (e) {
+        relatedTarget = e.relatedTarget;
+        if(data_loaded) return;
+    	$.ajax({
+            dataType: "json",
+            url: "{{REST_URL}}catalog/url/",
+            data:params,
+            success:function(data){
+                data_loaded = true;
+            	$("#{{modal_id}}-loading").hide()
+            	var ct_list = $("#{{modal_id}}-list");
+            	ct_list.empty()
+                urls_data = data.objects;
+            	$.each(urls_data, function(index,obj){
+            	    //causes conflict with relative urls , needs to be handled with another way.
+                    //if(obj.url.indexOf("/") == 0)
+                       // obj.url  = window.location.href.substr(0,window.location.href.lastIndexOf("/map_viewer")) + obj.url;
+            		$('<a class="list-group-item" data-toggle="tooltip"  data-placement="bottom">')
+    	        		.attr("href",obj.url)
+    	        		.attr("title",obj.url)
+                        .attr("data-index",index)
+    	        		.text(obj.url_label)
+    	        		.appendTo(ct_list)
+    	        		.click(function(e){
+    						e.preventDefault();
+    				        $("a.list-group-item", "#{{modal_id}}-list").removeClass("active")
+    				        $(this).addClass('active');
+    					});
+            	});//end for each
+            }
+        });
+    });
+    
+
+});
+</script>
+
+
+
+

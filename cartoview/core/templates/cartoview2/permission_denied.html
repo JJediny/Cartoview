@@ -1,0 +1,11 @@
+{% extends "cartoview2/base.html" %}
+{% load staticfiles %}
+{% load staticfiles bootstrap %}
+{% block title %}Cartoview2 Home{% endblock %}
+{% block styles %}
+<link href="{% static 'cartoview2/css/home.css' %}" rel="stylesheet" media="screen">
+
+{% endblock styles %}
+{% block content %}
+<img src="{% static 'images/Access-Denied.jpg' %}" class="img-responsive" alt="Responsive image">
+{% endblock %}

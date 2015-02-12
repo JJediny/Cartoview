@@ -1,0 +1,218 @@
+{% extends "catalog/app_template.html" %}
+
+{% load thumbnail %}
+{% load sorting_tags staticfiles filters%}
+{% load pagination_tags %}
+
+{% block title %} Search Results{% endblock %}
+{% block styles %}
+<style>
+.label
+ {
+right: 0;
+top:0;
+position:absolute;
+border-radius: 6px 0 6px 0;
+ }
+</style>
+{% endblock %}
+{% block js_ready %}
+	<script>
+		$(document).ready(function () {
+			//odp.getTags();
+			//odp.getCategories();
+
+			//odp.getApps();
+			odp.setupSearchInput();
+
+			odp.setupSortLinks();
+			//odp.setupFilterLinks();
+
+
+		});
+
+		function confirm (resourceId){
+		    $('<div></div>').appendTo('body')
+    .html('<div><h6>Are you sure?</h6></div>')
+    .dialog({
+        modal: true,
+        title: 'Delete Item',
+        zIndex: 10000,
+        autoOpen: true,
+        width: 'auto',
+        resizable: false,
+        buttons: {
+            Yes: function () {
+                // $(obj).removeAttr('onclick');
+                // $(obj).parents('.Parent').remove();
+
+                window.location = '{% url 'catalog_base_url' %}resource/delete/'+resourceId+'/?next=' + encodeURIComponent('{{current_path}}')
+
+                $(this).dialog("close");
+            },
+            No: function () {
+                $(this).dialog("close");
+            }
+        },
+        close: function (event, ui) {
+            $(this).remove();
+        }
+    });
+    }
+	</script>
+{% endblock %}
+
+            
+{% block center_container %}
+
+
+<div class="row">
+	{% if tag %}
+
+        <!--<a href="{{SITE_ROOT}}/ideas" class="resource" id="promotion_header">-->
+            <!--<span class="icon_idea"></span> See how data sets are being used, in the <strong>Idea&nbsp;Gallery</strong>.-->
+        <!--</a>-->
+	    <h1 id="results_label">{{ tag }}</h1>
+    {% elif created_user  %}
+    <h1 id="results_label">Rescources created by <b>{{created_user.username}}</b></h1>
+    {% elif app and app_name %}
+        <h1 id="results_label">{{ app_name }}
+
+        </h1>
+        {% with app|add:'.new' as new_url_name %}
+            {% url new_url_name as new_url %}
+                {% if new_url %}
+                     <a href="{% url 'cartoview2_base_url' %}{{app}}/new" >Create new</a>
+                {% endif %}
+        {% endwith %}
+	{% else %}
+		{% if "search" in current_path and "?" in current_path %}
+			<h1 id="results_label">Search Results</h1>
+		{% else %}
+			<h1 id="results_label">All Records</h1>
+		{% endif %}
+	{% endif %}
+   </div>
+	<div id="results_header" class="row">
+		<div id="results_info">
+		    {% if results.count == 1 %}
+			<h2 id="count">{{results.count}} RESULT</h2>
+		    {% else %}
+			<h2 id="count">{{results.count}} RESULTS</h2>
+		    {% endif %}
+			<!--<div id="filter">-->
+				<!--<ul>-->
+                    <!--<li id='filter_all' class="btn-circle"><a href="{% url 'catalog_base_url' %}results/?sort=name&dir=asc" >ALL</a></li>-->
+                    <!--<li id='filter_featured' class="btn-circle"><a href="javascript:void()" onClick="odp.getFiltered('featured');return false;">Featured</a></li>-->
+					<!--<li id='filter_application' class="btn-circle"><a href="javascript:void()" onClick="odp.getFiltered('application');return false;" >APP</a></li>-->
+					<!--<li id='filter_data' class="btn-circle"><a href="javascript:void()" onClick="odp.getFiltered('data');return false;"/>DATA</a></li>-->
+					<!--<li id='filter_api' class="btn-circle"><a href="javascript:void()" onClick="odp.getFiltered('api');return false;">API</a></li>-->
+					<!--<li class="info_label">FILTER:</li>-->
+				<!--</ul>-->
+			<!--</div>-->
+			<div id="sort">
+				<ul>
+					<li id="sort_rating_score" class="btn-circle">{% anchor rating_score %}</li>
+					<li id="sort_name" class="btn-circle">{% anchor name %}</li>
+					<li class="info_label">SORT:</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+{% autosort results %}
+{% autopaginate results settings.resources_per_page %}
+	<div id="results_list">
+		<ul class="list-group">
+    {% if results.count > 0 %}
+
+		{% for r in results %}
+			<li class="resource list-group-item row">
+
+               <div class="col-md-3 col-sm-6 col-xs-12 no-col-padding badger-right badger-info">
+                {% if r.get_last_image.image %}
+                    {% thumbnail r.get_last_image.image "300x200" upscale=True format="PNG" as im %}
+
+						<a  href="{% url 'catalog_base_url' %}resource/{{r.id}}/{{r.name|slugify}}"><img class="img-thumbnail" src="{{ im.url }}" alt="{{r.get_last_image.title}}" >
+                     {% endthumbnail%}
+
+
+                        </a>
+                     {% elif r.url_set.all.0.service_type.image %}
+                     {% thumbnail r.url_set.all.0.service_type.image  "300x200" upscale=True format="PNG" as im %}
+
+                     <a href="{% url 'catalog_base_url' %}resource/{{r.id}}/{{r.name|slugify}}"><img class='img-thumbnail' src="{{ im.url }}" > </a>
+                 {% endthumbnail%}
+
+                       {%elif r.app.app_img%}
+                     {% thumbnail r.app.app_img   "300x200"  upscale=True format="PNG"   as im  %}
+                     <a href="{% url 'catalog_base_url' %}resource/{{r.id}}/{{r.name|slugify}}"><img class='img-thumbnail' src="{{ im.url }}" > </a>
+                            {% endthumbnail %}
+					{% else %}
+
+						<a   href="{% url 'catalog_base_url' %}resource/{{r.id}}/{{r.name|slugify}}"><img class='img-thumbnail' src="{%  static 'catalog/images/results_no_image.jpg' %}" alt="No Resource Images"  height="100" width="100"></a>
+					{% endif %}
+                </div>
+               <span class="label label-info tip pull-right">{% firstof r.data_types.all.0.data_type r.url_set.all.0.service_type.service_type r.data r.app.title %}</span>
+                <div class="col-md-9">
+				<!--<div id="url_types">-->
+					<!--{% for u in r.get_distinct_url_types %}-->
+						<!--<div class="url_image" id="resource_icon_{{u}}" alt="{{u}}" title="{{u}}"></div>-->
+					<!--{% endfor %}</div>-->
+                    {% if settings.enable_rating %}
+				<div id="rating_image">
+					<div id="rating">
+						<input name="star_r{{r.id}}" type="radio" class="star star_r{{r.id}}" disabled="disabled"/>
+						<input name="star_r{{r.id}}" type="radio" class="star star_r{{r.id}}" disabled="disabled"/>
+						<input name="star_r{{r.id}}" type="radio" class="star star_r{{r.id}}" disabled="disabled"/>
+						<input name="star_r{{r.id}}" type="radio" class="star star_r{{r.id}}" disabled="disabled"/>
+						<input name="star_r{{r.id}}" type="radio" class="star star_r{{r.id}}" disabled="disabled"/>
+						<script type="text/javascript">
+							var rating = {{r.rating.score|default:"0"}};
+							if (rating != 0) {
+								$("input:radio.star_r{{r.id}}")[{{r.rating.score}}-1].checked = 'checked';
+							}
+						</script>
+					</div>
+
+				</div>
+                    {% endif %}
+				<div id="resource_info">
+					<h3 id="resource_title"><a href="{% url 'catalog_base_url' %}resource/{{r.id}}/{{r.name|slugify}}">{{r}}</a></h3>
+
+					<h4 id="resource_desc">{{r.short_description|safe|default:"No description available."}}</h4>
+					<div id="resource_button">
+                    {% for url in r.get_grouped_urls.Application %}
+                            {% if url.url_label == 'View' %}
+                                 <a class="btn btn-primary" href="{{url.url}}">{{url.url_label}}</a>
+                            {% endif %}
+                         {% endfor %}
+					<a class="btn btn-primary" href="{% url 'catalog_base_url' %}resource/{{r.id}}/{{r.name|slugify}}">Details</a>
+
+                    {% if r.app.name in perms %}
+                          {% if r.app.name|can_delete in perms %}
+                                <a class="btn  btn-danger" href="javascript:void()" onClick="confirm({{r.id}});return false;">Delete</a>
+                    {% endif %}
+
+                    {% elif r.get_grouped_urls.API or resource.get_grouped_urls.Data  %}
+                        {% if perms.catalog.delete_resource %}
+                   <a class="btn btn-danger" href="javascript:void()" onClick="confirm({{r.id}});return false;">Delete</a>
+                        {% endif %}
+                    {% endif %}
+				</div>
+            </div>
+			</li>
+		{% endfor %}
+    {% else %}
+      <li class="resource list-group-item">
+        <div class="resource error_message">
+      Did your search return zero results? Try limiting or expanding your search terms.</div>
+
+      </li>
+    {% endif %}
+
+		</ul>
+	</div>
+
+	<div id="pager">{% paginate %}</div>
+
+{% endblock %}

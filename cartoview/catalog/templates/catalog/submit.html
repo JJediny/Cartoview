@@ -1,0 +1,179 @@
+{% extends "catalog/template-submit.html" %}
+{% load staticfiles %}
+{% load staticfiles bootstrap %}
+{% block title %} - Submit Data{% endblock %}
+{% block styles %}
+ <link href="{% static 'bootstrap-tagsinput/bootstrap-tagsinput.css' %}" rel="stylesheet">
+<link href="{% static 'typeahead/typeahead.css' %}" rel="stylesheet">
+
+{% endblock %}
+{% block js_ready %}
+	<script>
+		$(document).ready(function () {
+			odp.setupSearchInput();
+		});
+	</script>
+{% endblock %}
+
+{% block center_container %}
+        <a class="btn btn-warning  pull-right" href="{% url 'catalog_base_url' %}" ><span class="glyphicon glyphicon-arrow-left"></span> Back to catalog</a>
+        <br><br>
+    <form id='addForm' class="form-horizontal" role="form" method="post" enctype="multipart/form-data" > {% csrf_token %}
+    {{submission_form|bootstrap_horizontal}}
+     <div class="form-group">
+        <label class="control-label col-sm-2 col-lg-2 " for="tags">Tags</label><div class=" col-sm-10 col-lg-10 ">
+            <input class=" form-control" id="tags"  name="tags"  placeholder="Add tags" type="text">
+          </div>
+        </div>
+     {{url_form.url|bootstrap_horizontal}}
+     {{url_form.url_label|bootstrap_horizontal}}
+     {{url_form.url_type|bootstrap_horizontal}}
+
+
+     <div id ='api_form' class = 'well'>
+     {{api_form|bootstrap_horizontal}}
+     </div>
+
+     <div id ='data_form' class = 'well'>
+     {{data_form|bootstrap_horizontal}}
+     </div>
+
+     {{urlimage_form|bootstrap_horizontal}}
+
+
+        <div class="pull-right">
+        <button class="btn btn-primary pull-right" title="next" type="submit">Submit</button> &nbsp
+            <input class="btn btn-info" type="reset" value="reset" onclick="window.location='{{current_path}}'"/>&nbsp
+        </div>
+	</form>
+{% endblock %}
+
+  {% block scripts %}
+<script src="{% static 'bootstrap-tagsinput/bootstrap-tagsinput.js' %}"></script>
+<script src="{% static 'typeahead/typeahead.bundle.js' %}"></script>
+<script src="{% static 'typeahead/typeahead.js' %}"></script>
+<script type="text/javascript">
+{% if tags %}
+$('#tags').val('{{tags}}');
+{% endif %}
+{% if all_tags %}
+var all_tags = {{all_tags|safe}};
+$('#tags').tagsinput({typeahead : { source: all_tags}});
+{% else %}
+$('#tags').tagsinput();
+{% endif %}
+
+$('#addForm').submit(function () {
+
+    $(this).append($('<input>', {
+            type: 'hidden',
+            name: 'appInstance_form-tags',
+            id: 'id_appInstance_form-tags',
+            value: $('#tags').val()
+        })
+    );
+});
+//======================================================================================
+if ($('#id_url_form-url_type').val() == '1')
+    {
+        $("#data_form").hide();
+        $("#api_form").show();
+    }
+else if ($('#id_url_form-url_type').val() == '3')
+    {
+        $("#api_form").hide();
+        $("#data_form").show();
+    }
+else
+    {
+        $("#api_form").hide();
+        $("#data_form").hide();
+    }
+
+$('#id_url_form-url_type').on('change', function() {
+      if ( this.value == '1') //API
+
+      {
+        $("#data_form").hide();
+        $("#api_form").show();
+      }
+      else if (this.value == '3' ) //Data
+      {
+        $("#api_form").hide();
+        $("#data_form").show();
+      }
+      else //any other choice
+      {
+        $("#api_form").hide();
+        $("#data_form").hide();
+      }
+    });
+//======================================================================================
+{% if not api_form.service_type.value %}
+    $("#id_api_form-service_type").attr('disabled', true);
+
+{% else %}
+
+    var service_type = {{api_form.service_type.value}} ;
+    var provider = {{api_form.provider.value}} ;
+    $.getJSON("{% url 'cartoview2_base_url' %}" + "rest/catalog/servicetype/?format=json&provider__id="+provider, function(response) {
+
+        var options = '<option>---------- </option>';
+        for (var i = 0; i < response.objects.length; i++) {
+          options += '<option value="' + parseInt(response.objects[i].id) + '">' + response.objects[i].service_type + '</option>';
+        }
+        $("#id_api_form-service_type").html(options);
+        $("#id_api_form-service_type").val(service_type);
+      })
+
+
+{% endif %}
+
+
+    $("select#id_api_form-provider").change(function(){
+
+      $.getJSON("{% url 'cartoview2_base_url' %}" + "rest/catalog/servicetype/?format=json&provider__id="+$(this).val(), function(response) {
+
+        var options = '<option>---------- </option>';
+        for (var i = 0; i < response.objects.length; i++) {
+          options += '<option value="' + parseInt(response.objects[i].id) + '">' + response.objects[i].service_type + '</option>';
+        }
+        $("#id_api_form-service_type").html(options);
+        $("#id_api_form-service_type option:first").attr('selected', 'selected');
+        $("#id_api_form-service_type").attr('disabled', false);
+      })
+      $("#id_api_form-provider").attr('selected', 'selected');
+    })
+
+    $("#id_url_form-url").change(function (e) {
+    var resource_url = $(this).val();
+    var url_input = $(this);
+  $.ajax({
+        type: "POST",
+        url: "{% url 'validate_url' %}",
+        data: {'url':resource_url , 'csrfmiddlewaretoken':'{{csrf_token}}' },
+        dataType: "json",
+        success: function(response) {
+            if (response.exists) {
+               var form_group = url_input.closest('div.form-group');
+               form_group.find('p').remove();
+               form_group.removeClass('has-warning has-feedback');
+               form_group.addClass("has-warning has-feedback");
+               url_input.parent().append('<p style="color:#8a6d3b;"><b>Warning : This URL exists in one or more items in the catalog.</b></p>')
+
+
+            } else {
+                var form_group = url_input.closest('div.form-group');
+
+                form_group.find('p').remove();
+                form_group.removeClass('has-warning has-feedback');
+            }
+        },
+        error: function(rs, e) {
+
+        }
+    });
+});
+
+	</script>
+{% endblock scripts %}

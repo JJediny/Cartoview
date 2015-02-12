@@ -1,0 +1,36 @@
+{% extends "catalog/base.html" %}
+{% load staticfiles %}
+{% block js_ready %}
+	<script>
+		$(document).ready(function () {
+			odp.getTags();
+			//odp.getApps();
+			odp.setupSearchInput();
+		});
+	</script>
+
+{% block extra_scripts %}{% endblock %}
+
+{% endblock %}
+
+          {% block top-bar%}
+    {% include "catalog/searchbar.html" %}
+        {% endblock top-bar %}
+
+{% block content %}
+
+
+
+	<div id="container" class="container">
+
+		<div id="center_content">
+			{% block center_container %}
+			{% endblock %}
+		</div>
+
+	</div>
+
+  {% include "catalog/footer.html" %}
+
+
+{% endblock %}

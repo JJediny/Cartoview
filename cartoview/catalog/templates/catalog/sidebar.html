@@ -1,0 +1,91 @@
+<div id="left_container" class="col-md-2 col-md-pull-10" xmlns="http://www.w3.org/1999/html">
+
+<!--<a href="{% url 'catalog_base_url' %}" id="logo">Site Logo</a>-->
+
+    <div id="tags">
+        <!--<h2 class="grid">Data</h2>-->
+            <!--<ul>-->
+                <!--<li><a href="{% url 'catalog_base_url' %}results/?sort=name&dir=asc">All Data</a></li>-->
+                <!--</br>-->
+                <!--<div id="tags_list">-->
+                    <!--<h3 class="grid"><strong>Tags</strong></h3>-->
+                    <!--<div><p><li id="tag_list"></li></p></div>-->
+                <!--</div>-->
+                <!--</br>-->
+                <!--<h2 class="grid"><strong>Apps</strong></h2>-->
+                <!--<li id="app_list"></li>-->
+                <!--<li class="separator"></li>-->
+                <!--<li class="icon-xsm" id="ideas"><a href="{% url 'catalog_base_url' %}ideas">Idea Gallery</a></li>-->
+          <!--<li class="icon-xsm" id="add"><a href="{% url 'catalog_base_url' %}submit/">Submit Data</a></li>-->
+          <!--<li class="icon-xsm" id="nominate"><a href="{% url 'catalog_base_url' %}nominate/?sort=rating_score&dir=desc">Nominate Data</a></li>-->
+
+            <!--</ul>-->
+         <!--<div class="panel-group" id="data_filter">-->
+          <!--<div class="panel panel-default">-->
+            <!--<div class="panel-heading">-->
+              <!--<h4 class="panel-title">-->
+                <!--<a data-toggle="collapse" data-parent="#accordion" href="#collapseData">Data</a>-->
+              <!--</h4>-->
+            <!--</div>-->
+            <!--<div id="collapseData" class="panel-collapse collapse in">-->
+                 <!--<ul class="panel-body">-->
+                      <!--<li><a href="{% url 'catalog_base_url' %}results/?sort=name&dir=asc">All Data</a></li>-->
+                 <!--</ul>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        {% if settings.show_categories_panel %}
+          <div class="panel-group" id="categories_list">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseCategories">Categories</a>
+              </h4>
+            </div>
+            <div id="collapseCategories" class="panel-collapse collapse in">
+                 <ul class="panel-body">
+                      <div id="category_list"></div>
+                 </ul>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        <br>
+        {% if settings.show_tags_panel %}
+        <div class="panel-group" id="tags_list">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Tags</a>
+              </h4>
+            </div>
+            <div id="collapseOne" style="max-height: 250px; overflow-y:scroll;" class="panel-collapse collapse in">
+                 <ul class="panel-body">
+                      <div id="tag_list"></div>
+                 </ul>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+	</div>
+
+	</div>
+	<!--<div id="abouts">-->
+	  <!--<h2 class="grid">About</h2>-->
+		<!--<ul>-->
+			<!--<li id="about"><a href="{% url 'catalog_base_url' %}about/">About</a></li>-->
+			<!--<li id="faq"><a href="{% url 'catalog_base_url' %}faq/">FAQ</a></li>-->
+            <!--<li id="usefullinks"><a href="{% url 'catalog_base_url' %}usefullinks/">Useful Links</a></li>-->
+			<!--<li id="contact"><a href="{% url 'catalog_base_url' %}contact/">Contact</a></li>-->
+			<!--<li id="terms"><a href="{% url 'catalog_base_url' %}terms/">Terms</a></li>-->
+            <!--<li id="feeds"><a href="{% url 'catalog_base_url' %}feeds/">RSS Feeds</a></li>-->
+            <!--<li id="feeds"><a href="{% url 'catalog_base_url' %}catalog/csw?service=CSW&amp;version=2.0.2&amp;request=GetCapabilities">OGC Catalog Service</a></li>-->
+            <!--<li id="feeds"><a href="{% url 'catalog_base_url' %}data.json">Open Data Catalog JSON</a></li>-->
+            <!--{% if perms.opendata.change_resource %}-->
+			<!--<li class="separator"></li>-->
+            <!--<li id="admin"><a href="{% url 'catalog_base_url' %}_admin_">Administration</a></li>-->
+            <!--{% endif %}-->
+		<!--</ul>-->
+	<!--</div>-->
+
+</div>

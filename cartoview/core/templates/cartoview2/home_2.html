@@ -1,0 +1,229 @@
+{% load i18n %}
+{% load account filters %}
+{% load staticfiles %}
+{% load url from future %}
+{% load staticfiles thumbnail %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Cartoview</title>
+	<link rel="icon" href="{% static 'images/cartoview.png' %}" >
+	<link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+	<link href="{% static 'home_2/home_2.css' %}" rel="stylesheet" media="screen">
+	<link href="{% static 'home_2/font-awesome-4.1.0/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+
+	<style>
+		div.list-group-item {
+			height: auto;
+		}
+		.list-group-item {
+			margin: 10px;
+		}
+		.list-group-item img{
+			max-height: 120px;
+			margin: auto;
+		}
+		.list-group-item {
+			border-bottom: 1px solid #eee;
+			border: 1px solid #eee;
+		}
+	</style>
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">-->
+                    <!--<span class="sr-only">Toggle navigation</span>-->
+                    <!--<span class="icon-bar"></span>-->
+                    <!--<span class="icon-bar"></span>-->
+                    <!--<span class="icon-bar"></span>-->
+                <!--</button>-->
+                <a class="navbar-brand" href="#" style="padding: 0 20px;"><img class="img-home-logo" width="160" src="{% static 'home_2/cartoview-logo.png' %}"></a>
+            </div>
+            <!-- Top Menu Items -->
+
+            <ul class="nav navbar-right  top-nav">
+                <li><a href="{% url 'catalog_base_url' %}"><i class="fa fa-fw fa-cubes"></i> Catalog</a></li>
+                <li class="dropdown">
+					{% if user.is_authenticated %}
+						{% if user.profile %}
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" style=""><img src= "{{ user.profile.get_picture }}" style="width:30px; height:30px;"/> {% filter force_escape %}{% firstof user.get_short_name user.get_username %}{% endfilter %} <b class="caret"></b></a>
+						{% else %}
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src= "{% static 'images/user.png' %}" style="width:30px; height:30px;"/> {% filter force_escape %}{% firstof user.get_short_name user.get_username %}{% endfilter %} <b class="caret"></b></a>
+						{%endif%}						
+                    {% else %}
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i><b class="caret"></b></a>
+                    {% endif %}
+					<ul class="dropdown-menu">
+                        {% if user.is_authenticated %}
+							{% url 'profile-settings' as profile_url %}
+							{% if profile_url and user.username %}
+								<li><a href="{% url 'profile-profile' user.username %}"><i class="fa fa-fw fa-user"></i> Profile</a></li>
+							{%endif%}
+							
+							{% url 'inbox' as message_url %}
+							{% if message_url %}
+								<li><a href="{% url 'inbox' %}"><i class="fa fa-fw fa-comments"></i> Messages</a></li>
+							{%endif%}
+							<li class="divider"></li>
+							<li><a href="{% url 'account_logout'%}"><i class="fa fa-fw fa-sign-out"></i> Logout</a></li>
+					    {% else %}
+							<li><a href="{% url 'account_login' %}"><i class="fa fa-fw fa-sign-in"></i> Login</a></li>
+					    {% endif %}
+                    </ul>
+                </li>
+            </ul>
+			<div id="search-div" class="col-md-6">
+				<form id="search-form" class="navbar-form">
+				   <div class="input-group">
+						<input type="text" class="form-control" placeholder="Search ..." id = "qs" name="qs" style="height: 28;">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+						</div>
+					</div>
+				</form>
+			</div>
+            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+            <!--<div class="collapse navbar-collapse navbar-ex1-collapse">-->
+                <!--<ul class="nav navbar-nav side-nav">-->
+                    <!--<li class="hidden-xs" style="background-color:#888;color:#fff; width: 200px; padding: 10px;">Links</li>-->
+                    <!--<li>-->
+                        <!--<a href="{% url 'catalog_base_url' %}"><i class="fa fa-fw fa-cubes"></i> Catalog</a>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                        <!--<a href="{% url 'cartoview2_settings_url' %}"><i class="fa fa-fw fa-gear"></i> Settings</a>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                        <!--<a href="{% url 'cartoview2_base_url' %}admin/"><i class="fa fa-fw fa-wrench"></i> Admin</a>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                        <!--<a href="http://cartoview.cartologic.com"><i class="fa fa-fw fa-info-circle"></i> About Cartoview</a>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                        <!--<a href="http://cartoview.cartologic.com/doc/dev/"><i class="fa fa-fw fa-puzzle-piece"></i> How to build your Apps?</a>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                        <!--<a href="http://cartoview.cartologic.com/apps/"><i class="fa fa-fw fa-download"></i> Download More Apps</a>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                        <!--<a href="javascript:;" data-toggle="collapse" data-target="#demo">Where to find GIS data <i class="fa fa-fw fa-caret-down"></i></a>-->
+                        <!--<ul id="demo" class="collapse">-->
+                            <!--<li><a href="http://arcgis.com">ArcGIS.com</a></li>-->
+							<!--<li><a href="http://geocommons.com/">GeoCommons</a></li>-->
+							<!--<li><a href="http://www.naturalearthdata.com/">Natural Earth data</a></li>-->
+							<!--<li><a href="http://data.worldbank.org/">World bank data</a></li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</div>-->
+            <!-- /.navbar-collapse -->
+        </nav>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row" style="margin:10px 0; font-size: 12px;">
+
+                    <div class="col-lg-11">
+						<div class="row">
+							<div class="list-group">
+								{% for app in CARTOVIEW_APPS %}
+								{% if app.in_menu %}
+								<div class="list-group-item ">
+									<div class="media col-md-2 col-sm-3 col-xs-12">
+										{% if app.app_img %}
+										
+										{% thumbnail app.app_img  '300x200' as im %}
+											<img class="media-object img-rounded img-responsive"  src="{{ im.url }}"  >
+										{% endthumbnail  %}
+
+										{% else %}
+											<img class="media-object img-rounded img-responsive" src="{% static '' %}home_2/default.png"  >
+										{% endif %}
+									</div>
+									<div class="col-md-10 col-sm-9 col-xs-12">
+										<div class="row">
+											<div class="col-lg-12">
+												<h4>{{app.title}}</h4>
+												<p class="ellipsis">{{app.description}}</p>
+											</div>
+											<div class="col-lg-12">
+												<span class="buttons">
+												<a href="{% url 'catalog_base_url' %}search/?sort=name&dir=asc&app={{app.name}}" class="btn btn-sm btn-primary"><i class="fa fa-fw fa-eye"></i> Explore </a>
+												{% if app.name in perms %}
+													{% if app.name|can_add in perms or app.name|has_no_perms %}
+														{% if app.new_url %}
+															<a href="{{app.new_url}}" class="btn btn-sm btn-primary"> Create new </a>
+														{% endif %}
+													{% endif %}
+												{% endif %}
+												{% if user.is_superuser %}
+													{% if app.settings_url %}
+														<a href="{{app.settings_url}}" class="btn btn-sm btn-primary"> <i class="fa fa-fw fa-gear"></i>Settings </a>
+													{% endif %}
+												 {% endif %}
+												</span>
+											</div>
+										</div>
+									</div>
+									<div style="clear:both;"></div>
+									
+								</div>								
+							 {% endif %}
+							 {% endfor %}
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+<script src="{% static 'jquery-1.10.2.min.js' %}"></script>
+
+<script src="{% static 'jquery-ui/js/jquery-ui-1.10.4.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+<script type="text/javascript">
+// Truncate to specific character
+$('.ellipsis').each(function() {
+	var entryTitle = $(this).text().trim();
+	if (entryTitle.length > 180) {
+		var chopCharacter = entryTitle.substring(0, 180) + "…";
+		$(this).text(chopCharacter);
+	}
+});
+
+$("#search-form").submit(function(evt) {
+	evt.stopImmediatePropagation();
+	evt.preventDefault();
+	if ($("#qs")[0].value != "" && $("#qs")[0].value != "Search for data") {
+		window.location = "{% url 'catalog_base_url' %}" + "search/?sort=name&dir=asc&qs=" + decodeURI($("#qs")[0].value);
+	} else {
+		window.location = "{% url 'catalog_base_url' %}" + "search/?sort=name&dir=asc";
+	}
+});
+
+</script>
+</body>
+
+</html>
