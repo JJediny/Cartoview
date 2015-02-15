@@ -1,5 +1,5 @@
 # Cartoview
-Geospatial Enterprise Web Applications Framework developded uisng [Django](http://www.djangoproject.com)
+Geospatial Enterprise Web Applications Framework developed using [Django](http://www.djangoproject.com)
 
 Explore the [demo](http://cartologic.com/nyc)
 
